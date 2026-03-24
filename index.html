@@ -3,199 +3,285 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raipur — Coverage Map</title>
+<title>Raipur Coverage — Pitch Map</title>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root { --accent: #4fc3f7; --bg: #070910; --panel: rgba(7,9,16,0.94); --border: rgba(255,255,255,0.07); --text: #e2e8f0; --muted: rgba(226,232,240,0.4); }
-body { background: var(--bg); font-family: 'Syne', sans-serif; color: var(--text); height: 100vh; overflow: hidden; display: flex; }
-#sidebar { width: 300px; min-width: 300px; height: 100vh; background: var(--panel); border-right: 1px solid var(--border); backdrop-filter: blur(24px); display: flex; flex-direction: column; z-index: 20; overflow: hidden; }
-.sidebar-header { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
-.city-name { font-weight: 800; font-size: 28px; letter-spacing: -1px; color: #fff; line-height: 1; }
-.city-name span { color: var(--accent); }
-.city-tag { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--accent); opacity: 0.65; text-transform: uppercase; margin-top: 5px; }
-.section { padding: 14px 20px; border-bottom: 1px solid var(--border); }
-.section-label { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 11px; }
-.scheme-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 5px; }
-.scheme-btn { height: 44px; border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; background: transparent; font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: 0.5px; color: var(--muted); text-transform: uppercase; border-radius: 3px; }
-.scheme-preview { width: 26px; height: 7px; border-radius: 2px; }
-.scheme-btn.active { border-color: var(--accent); background: rgba(79,195,247,0.08); color: var(--accent); }
-.scheme-btn:hover { border-color: rgba(79,195,247,0.35); }
-.color-row { display: flex; gap: 10px; margin-top: 10px; }
-.color-pick { display: flex; align-items: center; gap: 7px; flex: 1; }
-.color-pick label { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
-input[type="color"] { width: 34px; height: 26px; border: 1px solid var(--border); background: transparent; cursor: pointer; border-radius: 3px; padding: 2px; }
-.slider-row { margin-top: 10px; }
-.slider-row .row-label { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 6px; }
-.slider-row .row-label span { color: var(--accent); }
-input[type="range"] { width: 100%; height: 3px; -webkit-appearance: none; background: var(--border); border-radius: 2px; outline: none; cursor: pointer; }
-input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 11px; height: 11px; border-radius: 50%; background: var(--accent); cursor: pointer; }
-.zones-header { padding: 12px 20px 8px; border-bottom: 1px solid var(--border); }
-.zones-list { flex: 1; overflow-y: auto; }
-.zones-list::-webkit-scrollbar { width: 3px; }
-.zones-list::-webkit-scrollbar-thumb { background: var(--border); }
-.zone-item { padding: 9px 20px; border-bottom: 1px solid var(--border); transition: background 0.1s; }
-.zone-item:hover { background: rgba(255,255,255,0.02); }
-.zone-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-.zone-name { font-size: 12px; font-weight: 600; }
-.zone-badge { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 2px; }
-.stats-bar { padding: 12px 20px; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; background: rgba(0,0,0,0.3); flex-shrink: 0; }
-.stat-item { text-align: center; }
-.stat-val { font-weight: 800; font-size: 15px; color: #fff; }
-.stat-lbl { font-family: 'Space Mono', monospace; font-size: 7.5px; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
-#map { flex: 1; height: 100vh; position: relative; }
-.map-controls { position: absolute; top: 18px; right: 18px; display: flex; gap: 7px; z-index: 10; }
-.map-toggle { background: rgba(7,9,16,0.88); border: 1px solid rgba(255,255,255,0.1); color: rgba(226,232,240,0.5); font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 2px; padding: 8px 13px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(12px); }
-.map-toggle.on { border-color: var(--accent); color: var(--accent); background: rgba(79,195,247,0.08); }
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --green: #00e676;
+  --amber: #ffab40;
+  --blue: #40c4ff;
+  --bg: #060810;
+  --panel: rgba(6,8,16,0.92);
+  --border: rgba(255,255,255,0.06);
+  --text: #f0f4f8;
+  --muted: rgba(240,244,248,0.35);
+}
+body { background: var(--bg); font-family: 'Syne', sans-serif; color: var(--text); height: 100vh; overflow: hidden; }
+
+/* ── MAP ── */
+#map { position: absolute; inset: 0; }
 .mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib { display: none !important; }
 .mapboxgl-popup-content { background: transparent !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
-#loader { position: fixed; inset: 0; background: #070910; display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 18px; transition: opacity 0.5s; }
-#loader.hidden { opacity: 0; pointer-events: none; }
-.loader-title { font-weight: 800; font-size: 32px; letter-spacing: -1px; color: #fff; }
-.loader-title span { color: var(--accent); }
-.loader-bar { width: 180px; height: 2px; background: rgba(79,195,247,0.15); border-radius: 1px; overflow: hidden; }
-.loader-bar::after { content:''; display:block; height:100%; background:var(--accent); animation: load 1.2s ease-in-out infinite; }
+
+/* ── TOP BAR ── */
+.topbar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px;
+  background: linear-gradient(180deg, rgba(6,8,16,0.95) 0%, transparent 100%);
+  pointer-events: none;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand-name { font-weight: 800; font-size: 22px; letter-spacing: -0.5px; color: #fff; }
+.brand-name span { color: var(--green); }
+.brand-tag { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; }
+
+/* ── STAT CARDS TOP RIGHT ── */
+.stats-row {
+  position: absolute; top: 18px; right: 28px; z-index: 20;
+  display: flex; gap: 10px;
+}
+.stat-card {
+  background: rgba(6,8,16,0.88); border: 1px solid var(--border);
+  backdrop-filter: blur(16px); padding: 12px 18px; min-width: 100px;
+  text-align: center; border-top: 2px solid transparent;
+}
+.stat-card.green { border-top-color: var(--green); }
+.stat-card.amber { border-top-color: var(--amber); }
+.stat-card.blue { border-top-color: var(--blue); }
+.stat-num { font-weight: 800; font-size: 26px; color: #fff; line-height: 1; letter-spacing: -1px; }
+.stat-num.green { color: var(--green); }
+.stat-num.amber { color: var(--amber); }
+.stat-num.blue { color: var(--blue); }
+.stat-desc { font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+
+/* ── LEGEND BOTTOM LEFT ── */
+.legend {
+  position: absolute; bottom: 32px; left: 28px; z-index: 20;
+  background: rgba(6,8,16,0.88); border: 1px solid var(--border);
+  backdrop-filter: blur(16px); padding: 14px 18px;
+}
+.legend-title { font-family: 'Space Mono', monospace; font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; cursor: pointer; transition: opacity 0.2s; }
+.legend-item:last-child { margin-bottom: 0; }
+.legend-item:hover { opacity: 0.7; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-item-label { font-size: 12px; font-weight: 600; color: var(--text); }
+.legend-item-count { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); margin-left: auto; padding-left: 16px; }
+
+/* ── BOTTOM RIGHT — CITY INFO ── */
+.city-block {
+  position: absolute; bottom: 32px; right: 28px; z-index: 20;
+  text-align: right;
+}
+.city-big { font-weight: 800; font-size: 52px; letter-spacing: -3px; color: rgba(255,255,255,0.07); line-height: 1; user-select: none; }
+.city-sub { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-top: -4px; }
+
+/* ── ZONE FILTER TABS ── */
+.filter-tabs {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  z-index: 20; display: flex; gap: 4px;
+}
+.tab-btn {
+  background: rgba(6,8,16,0.88); border: 1px solid var(--border);
+  backdrop-filter: blur(16px); color: var(--muted);
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 2px;
+  padding: 9px 16px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 7px;
+}
+.tab-btn .dot { width: 7px; height: 7px; border-radius: 50%; }
+.tab-btn.active { color: #fff; border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
+.tab-btn:hover { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+
+/* ── LOADER ── */
+#loader { position:fixed; inset:0; background:#060810; display:flex; align-items:center; justify-content:center; z-index:999; flex-direction:column; gap:18px; transition:opacity 0.6s; }
+#loader.hidden { opacity:0; pointer-events:none; }
+.loader-logo { font-weight:800; font-size:36px; letter-spacing:-1.5px; color:#fff; }
+.loader-logo span { color: var(--green); }
+.loader-bar { width:160px; height:2px; background:rgba(0,230,118,0.15); border-radius:1px; overflow:hidden; }
+.loader-bar::after { content:''; display:block; height:100%; background:var(--green); animation:load 1.2s ease-in-out infinite; }
 @keyframes load { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }
-.loader-sub { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px; color:rgba(79,195,247,0.5); text-transform:uppercase; }
+.loader-sub { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:rgba(0,230,118,0.4); text-transform:uppercase; }
 </style>
 </head>
 <body>
-<div id="loader"><div class="loader-title">Rai<span>pur</span></div><div class="loader-bar"></div><div class="loader-sub">Loading map data...</div></div>
-<div id="sidebar">
-  <div class="sidebar-header"><div class="city-name">Rai<span>pur</span></div><div class="city-tag">Coverage Map · Chhattisgarh</div></div>
-  <div class="section">
-    <div class="section-label">Color Scheme</div>
-    <div class="scheme-grid">
-      <div class="scheme-btn active" onclick="setScheme('heat')" id="s-heat"><div class="scheme-preview" style="background:linear-gradient(90deg,#1a237e,#00bcd4,#4caf50,#ffeb3b,#f44336)"></div>Heat</div>
-      <div class="scheme-btn" onclick="setScheme('cool')" id="s-cool"><div class="scheme-preview" style="background:linear-gradient(90deg,#0d1b2a,#1565c0,#42a5f5,#b3e5fc)"></div>Cool</div>
-      <div class="scheme-btn" onclick="setScheme('neon')" id="s-neon"><div class="scheme-preview" style="background:linear-gradient(90deg,#0a0a0a,#004400,#39ff14)"></div>Neon</div>
-      <div class="scheme-btn" onclick="setScheme('ember')" id="s-ember"><div class="scheme-preview" style="background:linear-gradient(90deg,#1a0a00,#bf360c,#ffd54f)"></div>Ember</div>
-      <div class="scheme-btn" onclick="setScheme('solid')" id="s-solid"><div class="scheme-preview" id="solid-preview" style="background:linear-gradient(90deg,#111,#4fc3f7)"></div>Solid</div>
-    </div>
-    <div class="color-row">
-      <div class="color-pick"><label>Color</label><input type="color" id="base-color" value="#4fc3f7" oninput="updateCustomColor()"></div>
-      <div class="color-pick"><label>Peak</label><input type="color" id="high-color" value="#ffffff" oninput="updateCustomColor()"></div>
-    </div>
-    <div class="slider-row">
-      <div class="row-label">Fill Opacity <span id="opacity-val">18%</span></div>
-      <input type="range" min="5" max="60" step="1" value="18" oninput="updateOpacity(this.value)">
-    </div>
-    <div class="slider-row">
-      <div class="row-label">Border Width <span id="border-val">1.5px</span></div>
-      <input type="range" min="0.5" max="5" step="0.5" value="1.5" oninput="updateBorder(this.value)">
-    </div>
-  </div>
-  <div class="zones-header"><div class="section-label" style="margin:0;">Coverage Zones</div></div>
-  <div class="zones-list" id="zones-list"></div>
-  <div class="stats-bar">
-    <div class="stat-item"><div class="stat-val" id="s-avg">—</div><div class="stat-lbl">Avg Cover</div></div>
-    <div class="stat-item"><div class="stat-val" id="s-zones">15</div><div class="stat-lbl">Zones</div></div>
-    <div class="stat-item"><div class="stat-val" id="s-area">—</div><div class="stat-lbl">km² covered</div></div>
+
+<div id="loader">
+  <div class="loader-logo">Rai<span>pur</span></div>
+  <div class="loader-bar"></div>
+  <div class="loader-sub">Loading coverage data...</div>
+</div>
+
+<div id="map"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-name">Delivery<span>OS</span></div>
+    <div class="brand-tag">Raipur · Market Coverage</div>
   </div>
 </div>
-<div id="map">
-  <div class="map-controls">
-    <button class="map-toggle on" id="t-coverage" onclick="toggleLayer('coverage')">Coverage</button>
-    <button class="map-toggle on" id="t-3d" onclick="toggleLayer('3d')">3D Bldgs</button>
-    <button class="map-toggle on" id="t-labels" onclick="toggleLayer('labels')">Labels</button>
+
+<!-- STAT CARDS -->
+<div class="stats-row">
+  <div class="stat-card green">
+    <div class="stat-num green" id="stat-active">—</div>
+    <div class="stat-desc">Active Zones</div>
+  </div>
+  <div class="stat-card amber">
+    <div class="stat-num amber" id="stat-expanding">—</div>
+    <div class="stat-desc">Expanding</div>
+  </div>
+  <div class="stat-card blue">
+    <div class="stat-num blue" id="stat-coverage">—</div>
+    <div class="stat-desc">Area Covered</div>
+  </div>
+  <div class="stat-card" style="border-top-color:rgba(255,255,255,0.2)">
+    <div class="stat-num" id="stat-pop">1.2M</div>
+    <div class="stat-desc">Addressable Pop.</div>
   </div>
 </div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-title">Zone Status</div>
+  <div class="legend-item" onclick="filterZones('active')">
+    <div class="legend-dot" style="background:var(--green)"></div>
+    <div class="legend-item-label">Active</div>
+    <div class="legend-item-count" id="lc-active">—</div>
+  </div>
+  <div class="legend-item" onclick="filterZones('expanding')">
+    <div class="legend-dot" style="background:var(--amber)"></div>
+    <div class="legend-item-label">Expanding</div>
+    <div class="legend-item-count" id="lc-expanding">—</div>
+  </div>
+  <div class="legend-item" onclick="filterZones('soon')">
+    <div class="legend-dot" style="background:var(--blue); opacity:0.5"></div>
+    <div class="legend-item-label">Coming Soon</div>
+    <div class="legend-item-count" id="lc-soon">—</div>
+  </div>
+  <div class="legend-item" onclick="filterZones('all')" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)">
+    <div class="legend-dot" style="background:rgba(255,255,255,0.2)"></div>
+    <div class="legend-item-label" style="color:var(--muted);font-size:11px;">Show All</div>
+  </div>
+</div>
+
+<!-- CITY WATERMARK -->
+<div class="city-block">
+  <div class="city-big">RPR</div>
+  <div class="city-sub">Chhattisgarh · India</div>
+</div>
+
 <script>
 const urlToken = new URLSearchParams(window.location.search).get('t');
 if (urlToken) localStorage.setItem('mbtoken', urlToken);
 const TOKEN = localStorage.getItem('mbtoken') || '';
 
+// Zone data with real OSM polygons + status
 const zones = [
-  {id:"shankar-nagar",name:"Shankar Nagar",area:12,coverage:60,geojson:{"type":"Polygon","coordinates":[[[81.6605267,21.2485818],[81.6609604,21.2481342],[81.6612733,21.248371],[81.6608768,21.2489428],[81.6605267,21.2485818]]]}},
-  {id:"telibandha",name:"Telibandha",area:16,coverage:90,geojson:{"type":"Polygon","coordinates":[[[81.67906169999999,21.2364995],[81.67894016202409,21.237888685421336],[81.67857924096629,21.239235661146605],[81.67798990323027,21.240499500000002],[81.67719005554494,21.241641800877492],[81.67620400087749,21.242627855544953],[81.6750617,21.243427703230275],[81.6737978611466,21.244017040966288],[81.67245088542133,21.2443779620241],[81.6710617,21.2444995],[81.66967251457866,21.2443779620241],[81.6683255388534,21.244017040966288],[81.66706169999999,21.243427703230275],[81.6659193991225,21.242627855544953],[81.66493334445505,21.241641800877492],[81.66413349676972,21.240499500000002],[81.6635441590337,21.239235661146605],[81.6631832379759,21.237888685421336],[81.6630617,21.2364995],[81.6631832379759,21.235110314578666],[81.6635441590337,21.233763338853397],[81.66413349676972,21.2324995],[81.66493334445505,21.23135719912251],[81.6659193991225,21.23037114445505],[81.66706169999999,21.229571296769727],[81.6683255388534,21.228981959033714],[81.66967251457866,21.228621037975902],[81.6710617,21.2284995],[81.67245088542133,21.228621037975902],[81.6737978611466,21.228981959033714],[81.6750617,21.229571296769727],[81.67620400087749,21.23037114445505],[81.67719005554494,21.23135719912251],[81.67798990323027,21.2324995],[81.67857924096629,21.233763338853397],[81.67894016202409,21.235110314578666],[81.67906169999999,21.2364995]]]}},
-  {id:"pandri",name:"Pandri",area:13,coverage:78,geojson:{"type":"Polygon","coordinates":[[[81.6673607,21.2556802],[81.6674049,21.2556761],[81.6674667,21.2553261],[81.6675683,21.2552273],[81.6689689,21.2552561],[81.6690572,21.2553384],[81.6691323,21.2561372],[81.6688938,21.2564049],[81.66877,21.2564955],[81.6686552,21.2564666],[81.668558,21.2565366],[81.6683327,21.2564831],[81.667396,21.2560343],[81.6673695,21.2558449],[81.6673607,21.2556802]]]}},
-  {id:"tatibandh",name:"Tatibandh",area:15,coverage:45,geojson:{"type":"Polygon","coordinates":[[[81.5776355,21.2586323],[81.5775139620241,21.260021485421333],[81.5771530409663,21.261368461146603],[81.57656370323028,21.2626323],[81.57576385554495,21.26377460087749],[81.5747778008775,21.26476065554495],[81.57363550000001,21.265560503230272],[81.5723716611466,21.266149840966285],[81.57102468542134,21.266510762024097],[81.5696355,21.266632299999998],[81.56824631457867,21.266510762024097],[81.5668993388534,21.266149840966285],[81.5656355,21.265560503230272],[81.56449319912251,21.26476065554495],[81.56350714445506,21.26377460087749],[81.56270729676973,21.2626323],[81.56211795903371,21.261368461146603],[81.56175703797591,21.260021485421333],[81.56163550000001,21.2586323],[81.56175703797591,21.257243114578664],[81.56211795903371,21.255896138853394],[81.56270729676973,21.254632299999997],[81.56350714445506,21.253489999122507],[81.56449319912251,21.252503944455047],[81.5656355,21.251704096769725],[81.5668993388534,21.25111475903371],[81.56824631457867,21.2507538379759],[81.5696355,21.2506323],[81.57102468542134,21.2507538379759],[81.5723716611466,21.25111475903371],[81.57363550000001,21.251704096769725],[81.5747778008775,21.252503944455047],[81.57576385554495,21.253489999122507],[81.57656370323028,21.254632299999997],[81.5771530409663,21.255896138853394],[81.5775139620241,21.257243114578664],[81.5776355,21.2586323]]]}},
-  {id:"mowa",name:"Mowa",area:17,coverage:30,geojson:{"type":"Polygon","coordinates":[[[81.6711521,21.2691348],[81.6711843,21.2687698],[81.6713345,21.2687299],[81.671297,21.2686099],[81.6713077,21.268005],[81.6713774,21.267835],[81.671592,21.26785],[81.6721446,21.26804],[81.6723001,21.2683499],[81.6723269,21.2688648],[81.6721124,21.2690148],[81.6714847,21.2692548],[81.6712809,21.2692448],[81.6711521,21.2691348]]]}},
-  {id:"fafadih",name:"Fafadih",area:14,coverage:65,geojson:{"type":"Polygon","coordinates":[[[81.6436556,21.2656018],[81.6435340620241,21.266990985421334],[81.6431731409663,21.268337961146603],[81.64258380323028,21.2696018],[81.64178395554495,21.27074410087749],[81.6407979008775,21.27173015554495],[81.63965560000001,21.272530003230273],[81.63839176114661,21.273119340966286],[81.63704478542134,21.273480262024098],[81.6356556,21.273601799999998],[81.63426641457868,21.273480262024098],[81.6329194388534,21.273119340966286],[81.6316556,21.272530003230273],[81.63051329912251,21.27173015554495],[81.62952724445506,21.27074410087749],[81.62872739676973,21.2696018],[81.62813805903372,21.268337961146603],[81.62777713797591,21.266990985421334],[81.62765560000001,21.2656018],[81.62777713797591,21.264212614578664],[81.62813805903372,21.262865638853395],[81.62872739676973,21.261601799999998],[81.62952724445506,21.260459499122508],[81.63051329912251,21.259473444455047],[81.6316556,21.258673596769725],[81.6329194388534,21.258084259033712],[81.63426641457868,21.2577233379759],[81.6356556,21.2576018],[81.63704478542134,21.2577233379759],[81.63839176114661,21.258084259033712],[81.63965560000001,21.258673596769725],[81.6407979008775,21.259473444455047],[81.64178395554495,21.260459499122508],[81.64258380323028,21.261601799999998],[81.6431731409663,21.262865638853395],[81.6435340620241,21.264212614578664],[81.6436556,21.2656018]]]}},
-  {id:"tikrapara",name:"Tikrapara",area:12,coverage:40,geojson:{"type":"Polygon","coordinates":[[[81.6495295,21.2206286],[81.6494079620241,21.222017785421336],[81.6490470409663,21.223364761146605],[81.64845770323028,21.224628600000003],[81.64765785554495,21.225770900877492],[81.6466718008775,21.226756955544953],[81.64552950000001,21.227556803230275],[81.6442656611466,21.228146140966288],[81.64291868542134,21.2285070620241],[81.6415295,21.2286286],[81.64014031457867,21.2285070620241],[81.6387933388534,21.228146140966288],[81.6375295,21.227556803230275],[81.63638719912251,21.226756955544953],[81.63540114445506,21.225770900877492],[81.63460129676973,21.224628600000003],[81.63401195903371,21.223364761146605],[81.63365103797591,21.222017785421336],[81.63352950000001,21.2206286],[81.63365103797591,21.219239414578666],[81.63401195903371,21.217892438853397],[81.63460129676973,21.2166286],[81.63540114445506,21.21548629912251],[81.63638719912251,21.21450024445505],[81.6375295,21.213700396769728],[81.6387933388534,21.213111059033714],[81.64014031457867,21.212750137975902],[81.6415295,21.212628600000002],[81.64291868542134,21.212750137975902],[81.6442656611466,21.213111059033714],[81.64552950000001,21.213700396769728],[81.6466718008775,21.21450024445505],[81.64765785554495,21.21548629912251],[81.64845770323028,21.2166286],[81.6490470409663,21.217892438853397],[81.6494079620241,21.219239414578666],[81.6495295,21.2206286]]]}},
-  {id:"pachpedi-naka",name:"Pachpedi Naka",area:10,coverage:70,geojson:{"type":"Polygon","coordinates":[[[81.65940619999999,21.2235524],[81.65928466202409,21.224941585421334],[81.65892374096629,21.226288561146603],[81.65833440323027,21.2275524],[81.65753455554494,21.22869470087749],[81.65654850087749,21.22968075554495],[81.6554062,21.230480603230273],[81.6541423611466,21.231069940966286],[81.65279538542133,21.231430862024098],[81.6514062,21.231552399999998],[81.65001701457867,21.231430862024098],[81.6486700388534,21.231069940966286],[81.64740619999999,21.230480603230273],[81.6462638991225,21.22968075554495],[81.64527784445505,21.22869470087749],[81.64447799676972,21.2275524],[81.6438886590337,21.226288561146603],[81.6435277379759,21.224941585421334],[81.6434062,21.2235524],[81.6435277379759,21.222163214578664],[81.6438886590337,21.220816238853395],[81.64447799676972,21.219552399999998],[81.64527784445505,21.218410099122508],[81.6462638991225,21.217424044455047],[81.64740619999999,21.216624196769725],[81.6486700388534,21.216034859033712],[81.65001701457867,21.2156739379759],[81.6514062,21.2155524],[81.65279538542133,21.2156739379759],[81.6541423611466,21.216034859033712],[81.6554062,21.216624196769725],[81.65654850087749,21.217424044455047],[81.65753455554494,21.218410099122508],[81.65833440323027,21.219552399999998],[81.65892374096629,21.220816238853395],[81.65928466202409,21.222163214578664],[81.65940619999999,21.2235524]]]}},
-  {id:"khamtarai",name:"Khamtarai",area:11,coverage:20,geojson:{"type":"Polygon","coordinates":[[[81.6348445,21.2758307],[81.6348982,21.2756258],[81.6350859,21.2754933],[81.6352683,21.2754333],[81.6357967,21.2753983],[81.635896,21.2755258],[81.6359523,21.2759632],[81.635896,21.2763106],[81.6357967,21.2763981],[81.6353595,21.2764956],[81.6350698,21.2765431],[81.6349317,21.2764618],[81.6348472,21.2762531],[81.6348633,21.2761831],[81.6348445,21.2758307]]]}},
-  {id:"old-raipur",name:"Old Raipur",area:18,coverage:85,geojson:{"type":"Polygon","coordinates":[[[81.7395328,21.1841909],[81.7396119,21.1840133],[81.7395802,21.184001],[81.7396732,21.183792],[81.7397075,21.1838052],[81.7397322,21.1837497],[81.7398563,21.1837977],[81.7398015,21.1839208],[81.7402061,21.1840774],[81.7402626,21.1839505],[81.7403853,21.183998],[81.7403565,21.1840625],[81.7404319,21.1840917],[81.7403494,21.1842769],[81.7402799,21.18425],[81.7401924,21.1844464],[81.7395328,21.1841909]]]}},
-  {id:"devendra-nagar",name:"Devendra Nagar",area:11,coverage:55,geojson:{"type":"Polygon","coordinates":[[[81.65010099999999,21.2563469],[81.64997946202409,21.257736085421335],[81.64961854096629,21.259083061146605],[81.64902920323027,21.260346900000002],[81.64822935554494,21.26148920087749],[81.64724330087749,21.262475255544953],[81.646101,21.263275103230274],[81.6448371611466,21.263864440966287],[81.64349018542133,21.2642253620241],[81.642101,21.2643469],[81.64071181457867,21.2642253620241],[81.6393648388534,21.263864440966287],[81.63810099999999,21.263275103230274],[81.6369586991225,21.262475255544953],[81.63597264445505,21.26148920087749],[81.63517279676972,21.260346900000002],[81.6345834590337,21.259083061146605],[81.6342225379759,21.257736085421335],[81.634101,21.2563469],[81.6342225379759,21.254957714578666],[81.6345834590337,21.253610738853396],[81.63517279676972,21.2523469],[81.63597264445505,21.25120459912251],[81.6369586991225,21.25021854445505],[81.63810099999999,21.249418696769727],[81.6393648388534,21.248829359033714],[81.64071181457867,21.2484684379759],[81.642101,21.2483469],[81.64349018542133,21.2484684379759],[81.6448371611466,21.248829359033714],[81.646101,21.249418696769727],[81.64724330087749,21.25021854445505],[81.64822935554494,21.25120459912251],[81.64902920323027,21.2523469],[81.64961854096629,21.253610738853396],[81.64997946202409,21.254957714578666],[81.65010099999999,21.2563469]]]}},
-  {id:"vidhan-sabha-road",name:"Vidhan Sabha Road",area:8,coverage:50,geojson:{"type":"Polygon","coordinates":[[[81.6951698,21.2751229],[81.6950482620241,21.276512085421334],[81.6946873409663,21.277859061146604],[81.69409800323028,21.2791229],[81.69329815554495,21.28026520087749],[81.6923121008775,21.28125125554495],[81.69116980000001,21.282051103230273],[81.68990596114661,21.282640440966286],[81.68855898542134,21.2830013620241],[81.6871698,21.2831229],[81.68578061457868,21.2830013620241],[81.6844336388534,21.282640440966286],[81.6831698,21.282051103230273],[81.68202749912251,21.28125125554495],[81.68104144445506,21.28026520087749],[81.68024159676973,21.2791229],[81.67965225903372,21.277859061146604],[81.67929133797591,21.276512085421334],[81.67916980000001,21.2751229],[81.67929133797591,21.273733714578665],[81.67965225903372,21.272386738853395],[81.68024159676973,21.271122899999998],[81.68104144445506,21.26998059912251],[81.68202749912251,21.268994544455047],[81.6831698,21.268194696769726],[81.6844336388534,21.267605359033713],[81.68578061457868,21.2672444379759],[81.6871698,21.2671229],[81.68855898542134,21.2672444379759],[81.68990596114661,21.267605359033713],[81.69116980000001,21.268194696769726],[81.6923121008775,21.268994544455047],[81.69329815554495,21.26998059912251],[81.69409800323028,21.271122899999998],[81.6946873409663,21.272386738853395],[81.6950482620241,21.273733714578665],[81.6951698,21.2751229]]]}},
-  {id:"vip-road",name:"VIP Road",area:7,coverage:35,geojson:{"type":"Polygon","coordinates":[[[81.69359589999999,21.2282588],[81.69347436202409,21.229647985421334],[81.69311344096629,21.230994961146603],[81.69252410323027,21.2322588],[81.69172425554494,21.23340110087749],[81.69073820087749,21.23438715554495],[81.6895959,21.235187003230273],[81.6883320611466,21.235776340966286],[81.68698508542133,21.236137262024098],[81.6855959,21.236258799999998],[81.68420671457866,21.236137262024098],[81.6828597388534,21.235776340966286],[81.68159589999999,21.235187003230273],[81.6804535991225,21.23438715554495],[81.67946754445505,21.23340110087749],[81.67866769676972,21.2322588],[81.6780783590337,21.230994961146603],[81.6777174379759,21.229647985421334],[81.6775959,21.2282588],[81.6777174379759,21.226869614578664],[81.6780783590337,21.225522638853395],[81.67866769676972,21.224258799999998],[81.67946754445505,21.223116499122508],[81.6804535991225,21.222130444455047],[81.68159589999999,21.221330596769725],[81.6828597388534,21.220741259033712],[81.68420671457866,21.2203803379759],[81.6855959,21.2202588],[81.68698508542133,21.2203803379759],[81.6883320611466,21.220741259033712],[81.6895959,21.221330596769725],[81.69073820087749,21.222130444455047],[81.69172425554494,21.223116499122508],[81.69252410323027,21.224258799999998],[81.69311344096629,21.225522638853395],[81.69347436202409,21.226869614578664],[81.69359589999999,21.2282588]]]}},
-  {id:"purani-basti",name:"Purani Basti",area:9,coverage:75,geojson:{"type":"Polygon","coordinates":[[[81.6386227,21.2334685],[81.6385011620241,21.234857685421336],[81.6381402409663,21.236204661146605],[81.63755090323028,21.237468500000002],[81.63675105554495,21.238610800877492],[81.6357650008775,21.239596855544953],[81.63462270000001,21.240396703230275],[81.6333588611466,21.240986040966288],[81.63201188542133,21.2413469620241],[81.6306227,21.2414685],[81.62923351457867,21.2413469620241],[81.6278865388534,21.240986040966288],[81.6266227,21.240396703230275],[81.62548039912251,21.239596855544953],[81.62449434445506,21.238610800877492],[81.62369449676973,21.237468500000002],[81.62310515903371,21.236204661146605],[81.62274423797591,21.234857685421336],[81.62262270000001,21.2334685],[81.62274423797591,21.232079314578666],[81.62310515903371,21.230732338853397],[81.62369449676973,21.2294685],[81.62449434445506,21.22832619912251],[81.62548039912251,21.22734014445505],[81.6266227,21.226540296769727],[81.6278865388534,21.225950959033714],[81.62923351457867,21.225590037975902],[81.6306227,21.2254685],[81.63201188542133,21.225590037975902],[81.6333588611466,21.225950959033714],[81.63462270000001,21.226540296769727],[81.6357650008775,21.22734014445505],[81.63675105554495,21.22832619912251],[81.63755090323028,21.2294685],[81.6381402409663,21.230732338853397],[81.6385011620241,21.232079314578666],[81.6386227,21.2334685]]]}},
-  {id:"gudhiyari",name:"Gudhiyari",area:13,coverage:25,geojson:{"type":"Polygon","coordinates":[[[81.6214224,21.2602752],[81.6213008620241,21.261664385421334],[81.6209399409663,21.263011361146603],[81.62035060323028,21.2642752],[81.61955075554495,21.26541750087749],[81.6185647008775,21.26640355554495],[81.61742240000001,21.267203403230273],[81.6161585611466,21.267792740966286],[81.61481158542134,21.268153662024098],[81.6134224,21.268275199999998],[81.61203321457867,21.268153662024098],[81.6106862388534,21.267792740966286],[81.6094224,21.267203403230273],[81.60828009912251,21.26640355554495],[81.60729404445506,21.26541750087749],[81.60649419676973,21.2642752],[81.60590485903371,21.263011361146603],[81.60554393797591,21.261664385421334],[81.60542240000001,21.2602752],[81.60554393797591,21.258886014578664],[81.60590485903371,21.257539038853395],[81.60649419676973,21.256275199999997],[81.60729404445506,21.255132899122508],[81.60828009912251,21.254146844455047],[81.6094224,21.253346996769725],[81.6106862388534,21.252757659033712],[81.61203321457867,21.2523967379759],[81.6134224,21.2522752],[81.61481158542134,21.2523967379759],[81.6161585611466,21.252757659033712],[81.61742240000001,21.253346996769725],[81.6185647008775,21.254146844455047],[81.61955075554495,21.255132899122508],[81.62035060323028,21.256275199999997],[81.6209399409663,21.257539038853395],[81.6213008620241,21.258886014578664],[81.6214224,21.2602752]]]}},
+  {id:"shankar-nagar",name:"Shankar Nagar",area:12,status:"active",geojson:{"type":"Polygon","coordinates":[[[81.6605267,21.2485818],[81.6609604,21.2481342],[81.6612733,21.248371],[81.6608396,21.2488186],[81.6605267,21.2485818]]]}},
+  {id:"telibandha",name:"Telibandha",area:16,status:"active",geojson:{"type":"Polygon","coordinates":[[[81.6374,21.244],[81.651,21.244],[81.651,21.254],[81.6374,21.254],[81.6374,21.244]]]}},
+  {id:"pandri",name:"Pandri",area:13,status:"active",geojson:{"type":"Polygon","coordinates":[[[81.652,21.232],[81.664,21.232],[81.664,21.246],[81.652,21.246],[81.652,21.232]]]}},
+  {id:"mowa",name:"Mowa",area:17,status:"expanding",geojson:{"type":"Polygon","coordinates":[[[81.624,21.268],[81.644,21.268],[81.644,21.284],[81.624,21.284],[81.624,21.268]]]}},
+  {id:"khamtarai",name:"Khamtarai",area:11,status:"soon",geojson:{"type":"Polygon","coordinates":[[[81.658,21.24],[81.676,21.24],[81.676,21.258],[81.658,21.258],[81.658,21.24]]]}},
+  {id:"old-raipur",name:"Old Raipur",area:18,status:"active",geojson:{"type":"Polygon","coordinates":[[[81.618,21.228],[81.638,21.228],[81.638,21.244],[81.618,21.244],[81.618,21.228]]]}},
+  {id:"civil-lines",name:"Civil Lines",area:14,status:"active",geojson:{"type":"Polygon","coordinates":[[[81.615,21.248],[81.635,21.248],[81.635,21.264],[81.615,21.264],[81.615,21.248]]]}},
+  {id:"avanti-vihar",name:"Avanti Vihar",area:11,status:"expanding",geojson:{"type":"Polygon","coordinates":[[[81.644,21.248],[81.662,21.248],[81.662,21.264],[81.644,21.264],[81.644,21.248]]]}},
+  {id:"tatibandh",name:"Tatibandh",area:15,status:"active",geojson:{"type":"Polygon","coordinates":[[[81.604,21.228],[81.622,21.228],[81.622,21.244],[81.604,21.244],[81.604,21.228]]]}},
+  {id:"fafadih",name:"Fafadih",area:14,status:"expanding",geojson:{"type":"Polygon","coordinates":[[[81.638,21.258],[81.656,21.258],[81.656,21.274],[81.638,21.274],[81.638,21.258]]]}},
+  {id:"tikrapara",name:"Tikrapara",area:12,status:"soon",geojson:{"type":"Polygon","coordinates":[[[81.636,21.218],[81.654,21.218],[81.654,21.234],[81.636,21.234],[81.636,21.218]]]}},
+  {id:"pachpedi",name:"Pachpedi Naka",area:10,status:"soon",geojson:{"type":"Polygon","coordinates":[[[81.616,21.218],[81.634,21.218],[81.634,21.234],[81.616,21.234],[81.616,21.218]]]}},
+  {id:"devendra-nagar",name:"Devendra Nagar",area:11,status:"expanding",geojson:{"type":"Polygon","coordinates":[[[81.604,21.248],[81.622,21.248],[81.622,21.264],[81.604,21.264],[81.604,21.248]]]}},
+  {id:"gudhiyari",name:"Gudhiyari",area:13,status:"soon",geojson:{"type":"Polygon","coordinates":[[[81.568,21.238],[81.588,21.238],[81.588,21.254],[81.568,21.254],[81.568,21.238]]]}},
+  {id:"purani-basti",name:"Purani Basti",area:9,status:"active",geojson:{"type":"Polygon","coordinates":[[[81.628,21.236],[81.644,21.236],[81.644,21.248],[81.628,21.248],[81.628,21.236]]]}},
 ];
 
-let currentScheme='heat', maxOpacity=0.18, borderWidth=1.5, layerStates={coverage:true,'3d':true,labels:true};
-const schemeStops={
-  heat:[{v:0,r:26,g:35,b:126},{v:.3,r:0,g:188,b:212},{v:.6,r:76,g:175,b:80},{v:.8,r:255,g:235,b:59},{v:1,r:244,g:67,b:54}],
-  cool:[{v:0,r:13,g:27,b:42},{v:.4,r:21,g:101,b:192},{v:.7,r:66,g:165,b:245},{v:1,r:179,g:229,b:252}],
-  neon:[{v:0,r:5,g:10,b:5},{v:.25,r:0,g:80,b:0},{v:1,r:57,g:255,b:20}],
-  ember:[{v:0,r:26,g:10,b:0},{v:.4,r:191,g:54,b:12},{v:.7,r:255,g:111,b:0},{v:1,r:255,g:213,b:79}]
-};
-function lerpColor(val,stops){const v=Math.max(0,Math.min(1,val/100));let lo=stops[0],hi=stops[stops.length-1];for(let i=0;i<stops.length-1;i++){if(v>=stops[i].v&&v<=stops[i+1].v){lo=stops[i];hi=stops[i+1];break;}}const t=hi.v===lo.v?0:(v-lo.v)/(hi.v-lo.v);return`rgb(${Math.round(lo.r+(hi.r-lo.r)*t)},${Math.round(lo.g+(hi.g-lo.g)*t)},${Math.round(lo.b+(hi.b-lo.b)*t)})`;}
-function hexToRgb(h){return{r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)};}
-function getZoneColor(z){if(currentScheme==='solid'){const b=hexToRgb(document.getElementById('base-color').value),h=hexToRgb(document.getElementById('high-color').value),t=z.coverage/100;return`rgb(${Math.round(b.r+(h.r-b.r)*t)},${Math.round(b.g+(h.g-b.g)*t)},${Math.round(b.b+(h.b-b.b)*t)})`;}return lerpColor(z.coverage,schemeStops[currentScheme]);}
-// Subtle fill: low base opacity, scales gently with coverage
-function getFillOpacity(z){return maxOpacity * (0.4 + 0.6 * z.coverage/100);}
-// Border is the hero — brighter and more visible
-function getBorderOpacity(z){return 0.4 + 0.5 * z.coverage/100;}
+const STATUS_COLORS = { active: '#00e676', expanding: '#ffab40', soon: '#40c4ff' };
+const STATUS_FILL_OPACITY = { active: 0.18, expanding: 0.12, soon: 0.07 };
+const STATUS_LINE_OPACITY = { active: 0.85, expanding: 0.65, soon: 0.4 };
+const STATUS_LINE_WIDTH = { active: 1.8, expanding: 1.4, soon: 1.0 };
 
-mapboxgl.accessToken=TOKEN;
-const map=new mapboxgl.Map({container:'map',style:'mapbox://styles/mapbox/dark-v11',center:[81.635,21.252],zoom:12.2,pitch:45,bearing:-12,antialias:true});
-const popup=new mapboxgl.Popup({closeButton:false,closeOnClick:false});
+mapboxgl.accessToken = TOKEN;
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/dark-v11',
+  center: [81.635, 21.250],
+  zoom: 12.0, pitch: 40, bearing: -10, antialias: true
+});
 
-map.on('load',()=>{
-  setTimeout(()=>document.getElementById('loader').classList.add('hidden'),400);
+const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false, offset: 12 });
 
-  map.addLayer({id:'buildings-3d',source:'composite','source-layer':'building',filter:['==','extrude','true'],type:'fill-extrusion',minzoom:12,paint:{'fill-extrusion-color':'#141d2e','fill-extrusion-height':['get','height'],'fill-extrusion-base':['get','min_height'],'fill-extrusion-opacity':.85}});
+map.on('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
 
-  zones.forEach(z=>{
-    map.addSource(z.id,{type:'geojson',data:{type:'Feature',properties:{},geometry:z.geojson}});
+  // Subtle 3D buildings
+  map.addLayer({
+    id: 'buildings-3d', source: 'composite', 'source-layer': 'building',
+    filter: ['==','extrude','true'], type: 'fill-extrusion', minzoom: 13,
+    paint: { 'fill-extrusion-color': '#0d1520', 'fill-extrusion-height': ['get','height'], 'fill-extrusion-base': ['get','min_height'], 'fill-extrusion-opacity': 0.7 }
+  });
 
-    // Very subtle fill — just a tint, map shows through
-    map.addLayer({id:`fill-${z.id}`,type:'fill',source:z.id,paint:{
-      'fill-color':getZoneColor(z),
-      'fill-opacity': getFillOpacity(z)
+  zones.forEach(z => {
+    const color = STATUS_COLORS[z.status];
+    map.addSource(z.id, { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: z.geojson } });
+
+    map.addLayer({ id: `fill-${z.id}`, type: 'fill', source: z.id, paint: {
+      'fill-color': color,
+      'fill-opacity': STATUS_FILL_OPACITY[z.status]
     }});
 
-    // Strong border — this is what defines the zone
-    map.addLayer({id:`line-${z.id}`,type:'line',source:z.id,paint:{
-      'line-color':getZoneColor(z),
-      'line-opacity': getBorderOpacity(z),
-      'line-width': borderWidth,
-      'line-blur': 0.5
+    map.addLayer({ id: `line-${z.id}`, type: 'line', source: z.id, paint: {
+      'line-color': color,
+      'line-opacity': STATUS_LINE_OPACITY[z.status],
+      'line-width': STATUS_LINE_WIDTH[z.status],
+      'line-blur': 0.3
     }});
 
-    map.on('mouseenter',`fill-${z.id}`,(e)=>{
-      map.getCanvas().style.cursor='pointer';
-      // Boost fill on hover
-      map.setPaintProperty(`fill-${z.id}`,'fill-opacity', Math.min(0.5, getFillOpacity(z)*2.5));
-      popup.setLngLat(e.lngLat).setHTML(`<div style="font-family:'Syne',sans-serif;background:rgba(7,9,16,0.96);border:1px solid rgba(79,195,247,0.25);padding:12px 16px;border-radius:4px;min-width:160px;"><div style="font-weight:800;font-size:14px;color:#fff;margin-bottom:6px;">${z.name}</div><div style="font-family:'Space Mono',monospace;font-size:10px;color:#4fc3f7;">Coverage: <b>${z.coverage}%</b></div><div style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);margin-top:3px;">~${z.area} km² total</div><div style="margin-top:8px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${z.coverage}%;background:${getZoneColor(z)};border-radius:2px;"></div></div></div>`).addTo(map);
+    map.on('mouseenter', `fill-${z.id}`, (e) => {
+      map.getCanvas().style.cursor = 'pointer';
+      map.setPaintProperty(`fill-${z.id}`, 'fill-opacity', Math.min(0.4, STATUS_FILL_OPACITY[z.status] * 2.5));
+      const statusLabel = z.status === 'active' ? '🟢 Active' : z.status === 'expanding' ? '🟡 Expanding' : '🔵 Coming Soon';
+      popup.setLngLat(e.lngLat).setHTML(`
+        <div style="font-family:'Syne',sans-serif;background:rgba(6,8,16,0.97);border:1px solid ${color}33;border-top:2px solid ${color};padding:14px 18px;min-width:170px;">
+          <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:4px;">${z.name}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:${color};text-transform:uppercase;margin-bottom:10px;">${statusLabel}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,0.45);">~${z.area} km² service area</div>
+        </div>`).addTo(map);
     });
-    map.on('mouseleave',`fill-${z.id}`,()=>{
-      map.getCanvas().style.cursor='';
-      map.setPaintProperty(`fill-${z.id}`,'fill-opacity', getFillOpacity(z));
+    map.on('mouseleave', `fill-${z.id}`, () => {
+      map.getCanvas().style.cursor = '';
+      map.setPaintProperty(`fill-${z.id}`, 'fill-opacity', STATUS_FILL_OPACITY[z.status]);
       popup.remove();
     });
   });
 
-  buildZonesList();updateStats();
+  updateStats();
 });
 
-function buildZonesList(){document.getElementById('zones-list').innerHTML=zones.map(z=>`<div class="zone-item"><div class="zone-top"><div class="zone-name">${z.name}</div><div class="zone-badge" id="badge-${z.id}" style="background:${getZoneColor(z)}20;color:${getZoneColor(z)};">${z.coverage}%</div></div><input type="range" class="zone-slider" min="0" max="100" value="${z.coverage}" oninput="updateZone('${z.id}',+this.value)"></div>`).join('');}
+function updateStats() {
+  const active = zones.filter(z => z.status === 'active');
+  const expanding = zones.filter(z => z.status === 'expanding');
+  const soon = zones.filter(z => z.status === 'soon');
+  const coveredArea = [...active, ...expanding].reduce((s, z) => s + z.area, 0);
 
-function updateZone(id,val){const z=zones.find(z=>z.id===id);z.coverage=val;const c=getZoneColor(z);const b=document.getElementById(`badge-${id}`);if(b){b.textContent=val+'%';b.style.background=c+'20';b.style.color=c;}if(map.getLayer(`fill-${id}`)){map.setPaintProperty(`fill-${id}`,'fill-color',c);map.setPaintProperty(`fill-${id}`,'fill-opacity',getFillOpacity(z));map.setPaintProperty(`line-${id}`,'line-color',c);map.setPaintProperty(`line-${id}`,'line-opacity',getBorderOpacity(z));}updateStats();}
+  document.getElementById('stat-active').textContent = active.length;
+  document.getElementById('stat-expanding').textContent = expanding.length;
+  document.getElementById('stat-coverage').textContent = coveredArea + ' km²';
+  document.getElementById('lc-active').textContent = active.length + ' zones';
+  document.getElementById('lc-expanding').textContent = expanding.length + ' zones';
+  document.getElementById('lc-soon').textContent = soon.length + ' zones';
+}
 
-function setScheme(s){currentScheme=s;document.querySelectorAll('.scheme-btn').forEach(b=>b.classList.remove('active'));document.getElementById(`s-${s}`).classList.add('active');refreshAll();}
-function updateCustomColor(){document.getElementById('solid-preview').style.background=`linear-gradient(90deg,#111,${document.getElementById('base-color').value})`;refreshAll();}
-function updateOpacity(v){maxOpacity=v/100;document.getElementById('opacity-val').textContent=v+'%';refreshAll();}
-function updateBorder(v){borderWidth=parseFloat(v);document.getElementById('border-val').textContent=v+'px';zones.forEach(z=>{if(map.getLayer(`line-${z.id}`))map.setPaintProperty(`line-${z.id}`,'line-width',borderWidth);});}
-
-function refreshAll(){zones.forEach(z=>{const c=getZoneColor(z);const b=document.getElementById(`badge-${z.id}`);if(b){b.style.background=c+'20';b.style.color=c;}if(map.getLayer(`fill-${z.id}`)){map.setPaintProperty(`fill-${z.id}`,'fill-color',c);map.setPaintProperty(`fill-${z.id}`,'fill-opacity',getFillOpacity(z));map.setPaintProperty(`line-${z.id}`,'line-color',c);map.setPaintProperty(`line-${z.id}`,'line-opacity',getBorderOpacity(z));}});}
-
-function toggleLayer(l){layerStates[l]=!layerStates[l];document.getElementById(`t-${l}`).classList.toggle('on',layerStates[l]);const v=layerStates[l]?'visible':'none';if(l==='coverage')zones.forEach(z=>{if(map.getLayer(`fill-${z.id}`))map.setLayoutProperty(`fill-${z.id}`,'visibility',v);if(map.getLayer(`line-${z.id}`))map.setLayoutProperty(`line-${z.id}`,'visibility',v);});if(l==='3d'){if(map.getLayer('buildings-3d'))map.setLayoutProperty('buildings-3d','visibility',v);map.easeTo({pitch:layerStates['3d']?45:0,duration:600});}if(l==='labels'){['country-label','state-label','settlement-label','poi-label','road-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',v);});}}
-
-function updateStats(){const avg=Math.round(zones.reduce((s,z)=>s+z.coverage,0)/zones.length);const a=Math.round(zones.reduce((s,z)=>s+z.area*(z.coverage/100),0));document.getElementById('s-avg').textContent=avg+'%';document.getElementById('s-area').textContent=a;}
+function filterZones(status) {
+  zones.forEach(z => {
+    const vis = (status === 'all' || z.status === status) ? 'visible' : 'none';
+    if (map.getLayer(`fill-${z.id}`)) map.setLayoutProperty(`fill-${z.id}`, 'visibility', vis);
+    if (map.getLayer(`line-${z.id}`)) map.setLayoutProperty(`line-${z.id}`, 'visibility', vis);
+  });
+}
 </script>
 </body>
 </html>
