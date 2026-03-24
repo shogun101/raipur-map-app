@@ -8,428 +8,359 @@
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-:root { --accent:#ffd54f; --panel-bg:rgba(6,6,10,0.97); --border:rgba(255,255,255,0.06); --muted:rgba(255,255,255,0.3); --radius:5px; }
-body { background:#000; font-family:'Syne',sans-serif; color:#f0f0f8; height:100vh; overflow:hidden; }
-#map { position:absolute; inset:0; }
-.mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib { display:none !important; }
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--c:#ffd54f;--bg:rgba(5,5,9,0.97);--border:rgba(255,255,255,0.06);--muted:rgba(255,255,255,0.28);--r:5px}
+body{background:#000;font-family:'Syne',sans-serif;color:#f0f0f8;height:100vh;overflow:hidden}
+#map{position:absolute;inset:0}
+.mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{display:none!important}
 
-/* ─── TOPBAR ─── */
-.topbar { position:absolute; top:0; left:290px; right:0; z-index:20; pointer-events:none; padding:22px 28px; background:linear-gradient(180deg,rgba(0,0,0,0.85) 0%,transparent 100%); display:flex; justify-content:space-between; align-items:flex-start; }
-.brand { font-weight:800; font-size:20px; letter-spacing:-0.5px; color:#fff; }
-.brand span { color:var(--accent); transition:color 0.4s; }
-.brand-sub { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-top:3px; }
+/* TOPBAR */
+.topbar{position:absolute;top:0;left:300px;right:0;z-index:20;pointer-events:none;padding:20px 24px;background:linear-gradient(180deg,rgba(0,0,0,0.88) 0%,transparent 100%)}
+.brand{font-weight:800;font-size:19px;letter-spacing:-.5px;color:#fff}
+.brand em{color:var(--c);font-style:normal;transition:color .4s}
+.brand-sub{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:2px}
 
-/* ─── STATS top right ─── */
-.stats-row { position:absolute; top:20px; right:24px; z-index:20; display:flex; gap:7px; }
-.s-card { background:rgba(0,0,0,0.85); border:1px solid var(--border); backdrop-filter:blur(20px); padding:10px 14px; text-align:center; border-top:2px solid; opacity:0; transform:translateY(-6px); transition:opacity 0.4s,transform 0.4s,border-top-color 0.4s; }
-.s-card.show { opacity:1; transform:translateY(0); }
-.s-num { font-weight:800; font-size:22px; letter-spacing:-1px; line-height:1; transition:color 0.4s; }
-.s-lbl { font-family:'Space Mono',monospace; font-size:7px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin-top:3px; }
+/* STATS */
+.stats{position:absolute;top:18px;right:22px;z-index:20;display:flex;gap:6px}
+.sc{background:rgba(0,0,0,0.88);border:1px solid var(--border);backdrop-filter:blur(20px);padding:10px 14px;text-align:center;border-top:2px solid transparent;opacity:0;transform:translateY(-5px);transition:opacity .4s,transform .4s,border-top-color .4s}
+.sc.show{opacity:1;transform:translateY(0)}
+.sc-n{font-weight:800;font-size:22px;letter-spacing:-1px;line-height:1;transition:color .4s}
+.sc-l{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:3px}
 
-/* ─── PANEL ─── */
-.panel { position:absolute; top:0; bottom:0; left:0; width:284px; z-index:20; background:var(--panel-bg); border-right:1px solid var(--border); display:flex; flex-direction:column; opacity:0; transform:translateX(-12px); transition:opacity 0.5s 0.2s,transform 0.5s 0.2s; }
-.panel.show { opacity:1; transform:translateX(0); }
+/* PANEL */
+.panel{position:absolute;top:0;bottom:0;left:0;width:298px;z-index:20;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;opacity:0;transform:translateX(-10px);transition:opacity .5s .15s,transform .5s .15s}
+.panel.show{opacity:1;transform:translateX(0)}
 
-.panel-head { padding:20px 18px 14px; border-bottom:1px solid var(--border); }
-.panel-head-title { font-weight:800; font-size:15px; }
-.panel-head-sub { font-family:'Space Mono',monospace; font-size:7.5px; letter-spacing:2.5px; color:var(--muted); text-transform:uppercase; margin-top:3px; }
+.ph{padding:18px 18px 14px;border-bottom:1px solid var(--border)}
+.ph-title{font-weight:800;font-size:15px}
+.ph-sub{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-top:3px}
 
-.p-section { padding:12px 18px; border-bottom:1px solid var(--border); }
-.p-label { font-family:'Space Mono',monospace; font-size:7.5px; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ps{padding:12px 18px;border-bottom:1px solid var(--border)}
+.ps-label{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 
-/* ─── THEME SWATCHES ─── */
-.theme-row { display:flex; gap:5px; }
-.swatch { flex:1; height:36px; border-radius:var(--radius); cursor:pointer; border:1.5px solid transparent; transition:all 0.18s; position:relative; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; padding-bottom:3px; }
-.swatch.active { border-color:rgba(255,255,255,0.65); transform:scale(1.06); }
-.swatch:hover:not(.active) { border-color:rgba(255,255,255,0.22); }
-.swatch-label { font-family:'Space Mono',monospace; font-size:6px; letter-spacing:0.3px; color:rgba(255,255,255,0.65); position:relative; z-index:1; text-transform:uppercase; }
+/* THEME TABS */
+.theme-tabs{display:flex;gap:4px}
+.ttab{flex:1;padding:8px 4px;text-align:center;cursor:pointer;border-radius:var(--r);border:1.5px solid var(--border);transition:all .18s;position:relative;overflow:hidden}
+.ttab-swatch{width:100%;height:22px;border-radius:3px;margin-bottom:4px}
+.ttab-name{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;transition:color .18s}
+.ttab.active{border-color:rgba(255,255,255,.5)}
+.ttab.active .ttab-name{color:#fff}
+.ttab:hover:not(.active){border-color:rgba(255,255,255,.18)}
 
-/* ─── SLIDERS ─── */
-.sl-group { margin-bottom:12px; }
-.sl-group:last-child { margin-bottom:0; }
-.sl-head { display:flex; justify-content:space-between; margin-bottom:6px; }
-.sl-name { font-size:11px; font-weight:600; }
-.sl-val { font-family:'Space Mono',monospace; font-size:9.5px; color:var(--muted); }
-.sl-wrap { position:relative; height:18px; display:flex; align-items:center; }
-.sl-track { position:absolute; inset:0; display:flex; align-items:center; }
-.sl-track-bg { width:100%; height:3px; background:rgba(255,255,255,0.07); border-radius:2px; position:relative; overflow:hidden; }
-.sl-fill { position:absolute; left:0; top:0; height:100%; border-radius:2px; transition:background 0.4s; }
-input[type=range] { position:absolute; width:100%; height:100%; opacity:0; cursor:pointer; -webkit-appearance:none; }
-.sl-thumb { position:absolute; width:13px; height:13px; border-radius:50%; background:#fff; transform:translateX(-50%); pointer-events:none; transition:left 0.04s,background 0.4s,box-shadow 0.4s; }
+/* ZONE LIST */
+.zone-scroll{flex:1;overflow-y:auto}
+.zone-scroll::-webkit-scrollbar{width:2px}
+.zone-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:1px}
 
-/* ─── ZONE LIST ─── */
-.zone-scroll { flex:1; overflow-y:auto; }
-.zone-scroll::-webkit-scrollbar { width:2px; }
-.zone-scroll::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.07); }
+.zi{padding:10px 18px;border-bottom:1px solid var(--border)}
+.zi-top{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.zi-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s,box-shadow .4s}
+.zi-name{font-size:11.5px;font-weight:600;flex:1}
+.zi-pct{font-family:'Space Mono',monospace;font-size:10px;min-width:28px;text-align:right;transition:color .4s}
 
-.zone-item { display:flex; align-items:center; gap:9px; padding:9px 18px; border-bottom:1px solid var(--border); cursor:pointer; transition:background 0.12s; }
-.zone-item:hover { background:rgba(255,255,255,0.03); }
-.zone-item.in-coverage { background:rgba(255,255,255,0.04); }
-.zi-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; transition:box-shadow 0.4s,background 0.4s; }
-.zi-name { font-size:11.5px; font-weight:600; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.zi-tag { font-family:'Space Mono',monospace; font-size:7.5px; letter-spacing:1px; color:var(--muted); text-transform:uppercase; }
-/* Toggle pill */
-.zi-toggle { margin-left:auto; width:28px; height:15px; border-radius:8px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); position:relative; flex-shrink:0; cursor:pointer; transition:background 0.2s,border-color 0.2s; }
-.zi-toggle::after { content:''; position:absolute; width:10px; height:10px; border-radius:50%; background:#fff; top:50%; transform:translate(1px,-50%); transition:transform 0.2s,background 0.2s; }
-.zi-toggle.on { border-color:var(--accent); }
-.zi-toggle.on::after { transform:translate(15px,-50%); background:var(--accent); }
+/* DIALKIT SLIDER */
+.dk{position:relative;height:20px;display:flex;align-items:center}
+.dk-track{position:absolute;left:0;right:0;height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:visible}
+.dk-fill{position:absolute;left:0;top:0;height:100%;border-radius:2px;transition:background .4s}
+input[type=range]{position:absolute;width:100%;height:100%;opacity:0;cursor:pointer;-webkit-appearance:none;margin:0}
+.dk-thumb{position:absolute;width:13px;height:13px;border-radius:50%;pointer-events:none;transform:translateX(-50%);transition:left .04s,background .4s,box-shadow .4s}
 
-/* ─── FOOTER ─── */
-.panel-footer { padding:10px 18px; border-top:1px solid var(--border); display:flex; gap:6px; flex-shrink:0; }
-.f-btn { flex:1; display:flex; align-items:center; justify-content:center; gap:5px; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--muted); font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; padding:8px 6px; cursor:pointer; border-radius:var(--radius); transition:all 0.18s; }
-.f-btn:hover { background:rgba(255,255,255,0.08); color:#fff; border-color:rgba(255,255,255,0.15); }
-.f-btn.on { border-color:var(--accent); color:var(--accent); background:rgba(255,213,79,0.05); }
+/* FOOTER */
+.pf{padding:10px 18px;border-top:1px solid var(--border);display:flex;gap:6px;flex-shrink:0}
+.pf-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:9px 6px;cursor:pointer;border-radius:var(--r);transition:all .18s}
+.pf-btn:hover{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.15)}
+.pf-btn.on{border-color:var(--c)!important;color:var(--c)!important;background:rgba(255,213,79,.05)!important}
 
-.city-wm { position:absolute; bottom:24px; right:24px; z-index:10; text-align:right; pointer-events:none; }
-.city-wm-big { font-weight:800; font-size:90px; letter-spacing:-7px; color:rgba(255,255,255,0.02); line-height:1; }
-.city-wm-sub { font-family:'Space Mono',monospace; font-size:7.5px; letter-spacing:3px; color:rgba(255,255,255,0.08); text-transform:uppercase; }
+.city-wm{position:absolute;bottom:22px;right:22px;z-index:10;text-align:right;pointer-events:none}
+.city-wm big{font-weight:800;font-size:88px;letter-spacing:-7px;color:rgba(255,255,255,.022);line-height:1;display:block}
+.city-wm small{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:3px;color:rgba(255,255,255,.1);text-transform:uppercase}
 
-.toast { position:absolute; bottom:70px; right:24px; z-index:30; font-family:'Space Mono',monospace; font-size:8.5px; letter-spacing:1.5px; color:#00e676; text-transform:uppercase; padding:7px 13px; background:rgba(0,230,118,0.07); border:1px solid rgba(0,230,118,0.22); border-radius:var(--radius); opacity:0; transition:opacity 0.3s; pointer-events:none; }
-.toast.show { opacity:1; }
+.toast{position:absolute;bottom:68px;right:22px;z-index:30;font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:1.5px;color:#00e676;text-transform:uppercase;padding:7px 13px;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.22);border-radius:var(--r);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
 
-#loader { position:fixed; inset:0; background:#000; display:flex; align-items:center; justify-content:center; z-index:999; flex-direction:column; gap:16px; transition:opacity 0.7s; }
-#loader.hidden { opacity:0; pointer-events:none; }
-.l-logo { font-weight:800; font-size:32px; letter-spacing:-1px; color:#fff; }
-.l-logo span { color:#ffd54f; }
-.l-bar { width:120px; height:2px; background:rgba(255,213,79,0.1); overflow:hidden; }
-.l-bar::after { content:''; display:block; height:100%; background:#ffd54f; animation:ld 1.2s ease-in-out infinite; }
-@keyframes ld { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }
-.l-sub { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:3px; color:rgba(255,213,79,0.3); text-transform:uppercase; }
+#loader{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:14px;transition:opacity .7s}
+#loader.hidden{opacity:0;pointer-events:none}
+.ll{font-weight:800;font-size:30px;letter-spacing:-1px;color:#fff}
+.ll span{color:#ffd54f}
+.lb{width:110px;height:2px;background:rgba(255,213,79,.1);overflow:hidden}
+.lb::after{content:'';display:block;height:100%;background:#ffd54f;animation:ld 1.2s ease-in-out infinite}
+@keyframes ld{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+.ls{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(255,213,79,.28);text-transform:uppercase}
 </style>
 </head>
 <body>
-<div id="loader"><div class="l-logo">Rai<span>pur</span></div><div class="l-bar"></div><div class="l-sub">Building coverage...</div></div>
+<div id="loader"><div class="ll">Rai<span>pur</span></div><div class="lb"></div><div class="ls">Building map...</div></div>
 <div id="map"></div>
 
 <div class="topbar">
-  <div>
-    <div class="brand">Delivery<span id="b-accent">OS</span></div>
-    <div class="brand-sub">Raipur · Market Coverage</div>
-  </div>
+  <div class="brand">Delivery<em id="ba">OS</em></div>
+  <div class="brand-sub">Raipur · Market Coverage</div>
 </div>
 
-<div class="stats-row">
-  <div class="s-card" id="sc1"><div class="s-num" id="sn1">0</div><div class="s-lbl">Active</div></div>
-  <div class="s-card" id="sc2"><div class="s-num" id="sn2">0</div><div class="s-lbl">Zones</div></div>
-  <div class="s-card" id="sc3" style="border-top-color:rgba(255,255,255,0.12)"><div class="s-num" style="color:#fff">1.2M</div><div class="s-lbl">Pop.</div></div>
+<div class="stats">
+  <div class="sc" id="sc1"><div class="sc-n" id="sn1">0</div><div class="sc-l">Covered</div></div>
+  <div class="sc" id="sc2"><div class="sc-n" id="sn2" style="color:#fff">15</div><div class="sc-l">Zones</div></div>
+  <div class="sc" id="sc3" style="border-top-color:rgba(255,255,255,.12)"><div class="sc-n" style="color:#fff">1.2M</div><div class="sc-l">Pop.</div></div>
 </div>
 
 <div class="panel" id="panel">
-  <div class="panel-head">
-    <div class="panel-head-title">Coverage Zones</div>
-    <div class="panel-head-sub">Toggle to add/remove</div>
+  <div class="ph">
+    <div class="ph-title">Coverage Map</div>
+    <div class="ph-sub">Raipur · 15 zones</div>
   </div>
 
-  <div class="p-section">
-    <div class="p-label">Theme</div>
-    <div class="theme-row" id="theme-row"></div>
+  <!-- Themes -->
+  <div class="ps">
+    <div class="ps-label">Theme</div>
+    <div class="theme-tabs" id="theme-tabs"></div>
   </div>
 
-  <div class="p-section">
-    <div class="p-label">Display</div>
-    <div class="sl-group">
-      <div class="sl-head"><span class="sl-name">Dot Density</span><span class="sl-val" id="vDensity">High</span></div>
-      <div class="sl-wrap"><div class="sl-track"><div class="sl-track-bg"><div class="sl-fill" id="fDensity"></div></div></div><input type="range" min="1" max="3" step="1" value="2" id="sDensity" oninput="onSlider('Density',this.value)"><div class="sl-thumb" id="tDensity"></div></div>
-    </div>
-    <div class="sl-group">
-      <div class="sl-head"><span class="sl-name">Glow Blur</span><span class="sl-val" id="vBlur">0.4</span></div>
-      <div class="sl-wrap"><div class="sl-track"><div class="sl-track-bg"><div class="sl-fill" id="fBlur"></div></div></div><input type="range" min="0" max="1.2" step="0.05" value="0.4" id="sBlur" oninput="onSlider('Blur',this.value)"><div class="sl-thumb" id="tBlur"></div></div>
-    </div>
-    <div class="sl-group">
-      <div class="sl-head"><span class="sl-name">Brightness</span><span class="sl-val" id="vBright">80%</span></div>
-      <div class="sl-wrap"><div class="sl-track"><div class="sl-track-bg"><div class="sl-fill" id="fBright"></div></div></div><input type="range" min="20" max="100" step="2" value="80" id="sBright" oninput="onSlider('Bright',this.value)"><div class="sl-thumb" id="tBright"></div></div>
-    </div>
-  </div>
-
+  <!-- Zones with sliders -->
   <div class="zone-scroll" id="zone-list"></div>
 
-  <div class="panel-footer">
-    <button class="f-btn on" id="fx-btn" onclick="toggleFX()">
-      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/></svg>FX
+  <!-- Footer -->
+  <div class="pf">
+    <button class="pf-btn on" id="fx-btn" onclick="toggleFX()">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      Effects
     </button>
-    <button class="f-btn" onclick="selectAll()">All On</button>
-    <button class="f-btn" onclick="clearAll()">Clear</button>
-    <button class="f-btn" onclick="downloadPNG()">
-      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PNG
+    <button class="pf-btn" onclick="downloadPNG()">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      PNG
     </button>
   </div>
 </div>
 
-<div class="city-wm"><div class="city-wm-big">RPR</div><div class="city-wm-sub">Chhattisgarh</div></div>
+<div class="city-wm"><big>RPR</big><small>Chhattisgarh</small></div>
 <div class="toast" id="toast">✓ Saved</div>
 
 <script>
-const urlToken = new URLSearchParams(window.location.search).get('t');
-if (urlToken) localStorage.setItem('mbtoken', urlToken);
-const TOKEN = localStorage.getItem('mbtoken') || '';
+const urlToken=new URLSearchParams(window.location.search).get('t');
+if(urlToken) localStorage.setItem('mbtoken',urlToken);
+const TOKEN=localStorage.getItem('mbtoken')||'';
 
-// ── THEMES ────────────────────────────────────────────────────────────────
-const THEMES = [
-  { id:'city',   name:'City',  color:'#ffd54f', color2:'#ff8a65', bg:'radial-gradient(circle at 50% 70%,#ffd54f99,#ff8a6544,transparent 75%)' },
-  { id:'neon',   name:'Neon',  color:'#00e676', color2:'#69ff47', bg:'radial-gradient(circle at 50% 70%,#00e67699,#69ff4744,transparent 75%)' },
-  { id:'plasma', name:'Plsm',  color:'#e040fb', color2:'#f06292', bg:'radial-gradient(circle at 50% 70%,#e040fb99,#f0629244,transparent 75%)' },
-  { id:'ice',    name:'Ice',   color:'#40c4ff', color2:'#80d8ff', bg:'radial-gradient(circle at 50% 70%,#40c4ff99,#80d8ff44,transparent 75%)' },
-  { id:'ember',  name:'Embr',  color:'#ff5252', color2:'#ff6d00', bg:'radial-gradient(circle at 50% 70%,#ff525299,#ff6d0044,transparent 75%)' },
+/* ── THEMES ─────────────────────────────────────────────────────── */
+const THEMES=[
+  {id:'city',  name:'City',  c:'#ffd54f', grad:'linear-gradient(160deg,#b8860b,#ffd54f,#ff8a65)'},
+  {id:'neon',  name:'Neon',  c:'#00e676', grad:'linear-gradient(160deg,#005724,#00e676,#69ff47)'},
+  {id:'plasma',name:'Plasma',c:'#e040fb', grad:'linear-gradient(160deg,#6a0080,#e040fb,#f06292)'},
+  {id:'ice',   name:'Ice',   c:'#40c4ff', grad:'linear-gradient(160deg,#004d73,#40c4ff,#80d8ff)'},
+  {id:'ember', name:'Ember', c:'#ff5252', grad:'linear-gradient(160deg,#7f0000,#ff5252,#ff6d00)'},
 ];
-let theme = THEMES[0];
-let densityLevel = 2; // 1=low,2=med,3=high
-let blurVal = 0.4;
-let brightVal = 0.80;
-let fxOn = true;
+let theme=THEMES[0];
 
-// ── ZONES ────────────────────────────────────────────────────────────────
-const zones = [
-  { id:'old-raipur',    name:'Old Raipur',     inCoverage:true,  poly:[[81.616,21.226],[81.640,21.226],[81.640,21.244],[81.616,21.244]] },
-  { id:'purani-basti',  name:'Purani Basti',   inCoverage:true,  poly:[[81.629,21.234],[81.646,21.234],[81.646,21.248],[81.629,21.248]] },
-  { id:'tatibandh',     name:'Tatibandh',      inCoverage:true,  poly:[[81.597,21.226],[81.618,21.226],[81.618,21.244],[81.597,21.244]] },
-  { id:'telibandha',    name:'Telibandha',     inCoverage:true,  poly:[[81.604,21.238],[81.626,21.238],[81.626,21.256],[81.604,21.256]] },
-  { id:'civil-lines',   name:'Civil Lines',    inCoverage:true,  poly:[[81.609,21.248],[81.632,21.248],[81.632,21.267],[81.609,21.267]] },
-  { id:'pandri',        name:'Pandri',         inCoverage:true,  poly:[[81.648,21.229],[81.669,21.229],[81.669,21.247],[81.648,21.247]] },
-  { id:'shankar-nagar', name:'Shankar Nagar',  inCoverage:false, poly:[[81.652,21.248],[81.674,21.248],[81.674,21.265],[81.652,21.265]] },
-  { id:'avanti-vihar',  name:'Avanti Vihar',   inCoverage:false, poly:[[81.641,21.252],[81.659,21.252],[81.659,21.268],[81.641,21.268]] },
-  { id:'devendra-nagar',name:'Devendra Nagar', inCoverage:false, poly:[[81.596,21.248],[81.614,21.248],[81.614,21.266],[81.596,21.266]] },
-  { id:'fafadih',       name:'Fafadih',        inCoverage:false, poly:[[81.635,21.258],[81.656,21.258],[81.656,21.275],[81.635,21.275]] },
-  { id:'mowa',          name:'Mowa',           inCoverage:false, poly:[[81.620,21.268],[81.646,21.268],[81.646,21.286],[81.620,21.286]] },
-  { id:'tikrapara',     name:'Tikrapara',      inCoverage:false, poly:[[81.637,21.216],[81.657,21.216],[81.657,21.231],[81.637,21.231]] },
-  { id:'pachpedi',      name:'Pachpedi Naka',  inCoverage:false, poly:[[81.614,21.216],[81.634,21.216],[81.634,21.231],[81.614,21.231]] },
-  { id:'khamtarai',     name:'Khamtarai',      inCoverage:false, poly:[[81.657,21.239],[81.679,21.239],[81.679,21.257],[81.657,21.257]] },
-  { id:'gudhiyari',     name:'Gudhiyari',      inCoverage:false, poly:[[81.558,21.237],[81.580,21.237],[81.580,21.254],[81.558,21.254]] },
+/* ── ZONES ──────────────────────────────────────────────────────── */
+const zones=[
+  {id:'old-raipur',    name:'Old Raipur',      cov:85, poly:[[81.616,21.226],[81.640,21.226],[81.640,21.244],[81.616,21.244]]},
+  {id:'purani-basti',  name:'Purani Basti',    cov:80, poly:[[81.629,21.234],[81.646,21.234],[81.646,21.248],[81.629,21.248]]},
+  {id:'tatibandh',     name:'Tatibandh',       cov:75, poly:[[81.597,21.226],[81.618,21.226],[81.618,21.244],[81.597,21.244]]},
+  {id:'telibandha',    name:'Telibandha',      cov:90, poly:[[81.604,21.238],[81.626,21.238],[81.626,21.256],[81.604,21.256]]},
+  {id:'civil-lines',   name:'Civil Lines',     cov:70, poly:[[81.609,21.248],[81.632,21.248],[81.632,21.267],[81.609,21.267]]},
+  {id:'pandri',        name:'Pandri',          cov:78, poly:[[81.648,21.229],[81.669,21.229],[81.669,21.247],[81.648,21.247]]},
+  {id:'shankar-nagar', name:'Shankar Nagar',   cov:0,  poly:[[81.652,21.248],[81.674,21.248],[81.674,21.265],[81.652,21.265]]},
+  {id:'avanti-vihar',  name:'Avanti Vihar',    cov:0,  poly:[[81.641,21.252],[81.659,21.252],[81.659,21.268],[81.641,21.268]]},
+  {id:'devendra-nagar',name:'Devendra Nagar',  cov:0,  poly:[[81.596,21.248],[81.614,21.248],[81.614,21.266],[81.596,21.266]]},
+  {id:'fafadih',       name:'Fafadih',         cov:0,  poly:[[81.635,21.258],[81.656,21.258],[81.656,21.275],[81.635,21.275]]},
+  {id:'mowa',          name:'Mowa',            cov:0,  poly:[[81.620,21.268],[81.646,21.268],[81.646,21.286],[81.620,21.286]]},
+  {id:'tikrapara',     name:'Tikrapara',       cov:0,  poly:[[81.637,21.216],[81.657,21.216],[81.657,21.231],[81.637,21.231]]},
+  {id:'pachpedi',      name:'Pachpedi Naka',   cov:0,  poly:[[81.614,21.216],[81.634,21.216],[81.634,21.231],[81.614,21.231]]},
+  {id:'khamtarai',     name:'Khamtarai',       cov:0,  poly:[[81.657,21.239],[81.679,21.239],[81.679,21.257],[81.657,21.257]]},
+  {id:'gudhiyari',     name:'Gudhiyari',       cov:0,  poly:[[81.558,21.237],[81.580,21.237],[81.580,21.254],[81.558,21.254]]},
 ];
 
-// ── DOT GENERATOR — fills ENTIRE polygon densely ─────────────────────────
-// Uses a fine grid + random size variation so it looks like city lights
-function makeDots(zone) {
-  const [x0,y0]=zone.poly[0], [x1,y1]=zone.poly[2];
-  const cx=(x0+x1)/2, cy=(y0+y1)/2;
-  const w=Math.abs(x1-x0), h=Math.abs(y1-y0);
-  // Step: dense enough to have NO visible gaps between dots at zoom 12
-  const steps = { 1:0.0040, 2:0.0022, 3:0.0013 };
-  const step = steps[densityLevel];
-  const pts = [];
+let fxOn=true;
 
-  for (let x=x0-step*0.5; x<=x1+step*0.5; x+=step) {
-    for (let y=y0-step*0.5; y<=y1+step*0.5; y+=step) {
-      // Keep inside bounding box (polygon is a rectangle)
-      if (x<x0||x>x1||y<y0||y>y1) continue;
-      // Distance from center — normalized
-      const dx=(x-cx)/(w*0.5), dy=(y-cy)/(h*0.5);
+/* ── DOT GENERATOR ──────────────────────────────────────────────── */
+// coverage 0-100 → controls density (0 = no dots, 100 = fully packed)
+function makeDots(zone){
+  const cov=zone.cov/100;
+  if(cov<=0) return [];
+  const [x0,y0]=zone.poly[0],[x1,y1]=zone.poly[2];
+  const cx=(x0+x1)/2,cy=(y0+y1)/2,w=Math.abs(x1-x0),h=Math.abs(y1-y0);
+  const step=0.0020; // base dense grid
+  const pts=[];
+  for(let x=x0;x<=x1;x+=step){
+    for(let y=y0;y<=y1;y+=step){
+      if(x<x0||x>x1||y<y0||y>y1) continue;
+      const dx=(x-cx)/(w*0.5),dy=(y-cy)/(h*0.5);
       const dist=Math.sqrt(dx*dx+dy*dy);
-      // Small jitter so dots don't look mechanical
-      const jx=(Math.random()-0.5)*step*0.55;
-      const jy=(Math.random()-0.5)*step*0.55;
-      // Size: vary randomly — some big, some small, like real city lights
-      // Core of zone is generally brighter
-      const edgeFade = Math.max(0, 1 - Math.pow(dist,1.5));
-      const randSize = 0.3 + Math.random() * 0.7; // 0.3–1.0
-      const s = randSize * (0.5 + edgeFade * 0.5);
-      const op = edgeFade * (0.5 + Math.random() * 0.5);
-      pts.push({
-        type:'Feature',
-        geometry:{type:'Point',coordinates:[x+jx,y+jy]},
-        properties:{s, op}
-      });
+      // Edge softness — outer 20% fades
+      const edgeFade=Math.max(0, 1-Math.pow(Math.max(0,dist-0.8)/0.3, 1.5));
+      // Coverage controls whether this dot exists at all (probabilistic)
+      if(Math.random()>cov*0.9+0.1) continue;
+      const jx=(Math.random()-.5)*step*.5,jy=(Math.random()-.5)*step*.5;
+      const s=(0.35+Math.random()*.65)*edgeFade; // random dot size
+      const op=edgeFade*(0.45+Math.random()*.55)*cov;
+      if(op<0.05) continue;
+      pts.push({type:'Feature',geometry:{type:'Point',coordinates:[x+jx,y+jy]},properties:{s,op}});
     }
   }
   return pts;
 }
 
-// ── MAPBOX ───────────────────────────────────────────────────────────────
-mapboxgl.accessToken = TOKEN;
-const map = new mapboxgl.Map({
+/* ── MAP ────────────────────────────────────────────────────────── */
+mapboxgl.accessToken=TOKEN;
+const map=new mapboxgl.Map({
   container:'map',
-  style:{
-    version:8, sources:{}, glyphs:'mapbox://fonts/mapbox/{fontstack}/{range}',
-    layers:[{id:'bg',type:'background',paint:{'background-color':'#000000'}}]
-  },
-  center:[81.635,21.250], zoom:10.8, pitch:0, bearing:0,
-  antialias:true, preserveDrawingBuffer:true
+  style:{version:8,sources:{},glyphs:'mapbox://fonts/mapbox/{fontstack}/{range}',
+    layers:[{id:'bg',type:'background',paint:{'background-color':'#000000'}}]},
+  center:[81.635,21.250],zoom:10.8,pitch:0,bearing:0,
+  antialias:true,preserveDrawingBuffer:true
 });
 
-map.on('load', () => {
-  // Faint road lines for geography reference only
+map.on('load',()=>{
   map.addSource('streets',{type:'vector',url:'mapbox://mapbox.mapbox-streets-v8'});
-  map.addLayer({id:'water',type:'fill',source:'streets','source-layer':'water',
-    paint:{'fill-color':'rgba(5,12,25,0.9)'}});
+  map.addLayer({id:'water',type:'fill',source:'streets','source-layer':'water',paint:{'fill-color':'rgba(4,10,22,0.95)'}});
   map.addLayer({id:'roads',type:'line',source:'streets','source-layer':'road',
-    paint:{'line-color':'rgba(255,255,255,0.045)',
-           'line-width':['interpolate',['linear'],['zoom'],10,0.4,14,1.2,17,2.5]}});
+    paint:{'line-color':'rgba(255,255,255,0.05)','line-width':['interpolate',['linear'],['zoom'],10,0.4,14,1.2,17,2.5]}});
 
-  // Build initial dot layers
-  zones.forEach(z => buildZone(z));
-
+  zones.forEach(z=>buildLayer(z));
   buildUI();
   updateStats();
-  initSliders();
 
-  setTimeout(() => {
+  setTimeout(()=>{
     document.getElementById('loader').classList.add('hidden');
     ['sc1','sc2','sc3'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('show'),i*80));
     document.getElementById('panel').classList.add('show');
-    applyTheme(theme, false);
+    applyTheme(theme);
     setTimeout(()=>{
-      map.flyTo({center:[81.628,21.244],zoom:13.2,pitch:0,bearing:0,duration:3400,easing:t=>t<0.5?2*t*t:-1+(4-2*t)*t});
-    },1600);
-  },600);
+      map.flyTo({center:[81.628,21.244],zoom:13,pitch:0,bearing:0,duration:3200,easing:t=>t<.5?2*t*t:-1+(4-2*t)*t});
+    },1400);
+  },500);
 });
 
-function buildZone(z) {
-  const srcId=`src-${z.id}`, lyId=`ly-${z.id}`;
-  if(map.getLayer(lyId)) map.removeLayer(lyId);
-  if(map.getSource(srcId)) map.removeSource(srcId);
-  map.addSource(srcId,{type:'geojson',data:{type:'FeatureCollection',features:makeDots(z)}});
-  map.addLayer({
-    id:lyId, type:'circle', source:srcId,
-    layout:{'visibility': (fxOn && z.inCoverage) ? 'visible':'none'},
+function buildLayer(z){
+  const sid=`s-${z.id}`,lid=`l-${z.id}`;
+  if(map.getLayer(lid)) map.removeLayer(lid);
+  if(map.getSource(sid)) map.removeSource(sid);
+  const dots=makeDots(z);
+  if(!dots.length) return;
+  map.addSource(sid,{type:'geojson',data:{type:'FeatureCollection',features:dots}});
+  map.addLayer({id:lid,type:'circle',source:sid,
+    layout:{visibility:fxOn?'visible':'none'},
     paint:{
-      'circle-color': theme.color,
+      'circle-color':theme.c,
       'circle-radius':['interpolate',['linear'],['zoom'],
-        9, ['*',['get','s'],2.5],
-        11,['*',['get','s'],5],
-        13,['*',['get','s'],10],
-        15,['*',['get','s'],16],
-        17,['*',['get','s'],22]
-      ],
-      'circle-opacity':['*',['get','op'],brightVal],
-      'circle-blur': blurVal,
-      'circle-stroke-width':0,
+        9,['*',['get','s'],2.2], 11,['*',['get','s'],5],
+        13,['*',['get','s'],10], 15,['*',['get','s'],16], 17,['*',['get','s'],22]],
+      'circle-opacity':['*',['get','op'],.9],
+      'circle-blur':.35,
+      'circle-stroke-width':0
     }
   });
 }
 
-// ── THEME ────────────────────────────────────────────────────────────────
-function applyTheme(t, rebuild=false) {
-  theme = t;
-  document.documentElement.style.setProperty('--accent', t.color);
-  document.getElementById('b-accent').style.color = t.color;
-  document.getElementById('sc1').style.borderTopColor = t.color;
-  document.getElementById('sn1').style.color = t.color;
-  document.getElementById('sc2').style.borderTopColor = t.color+'99';
-  document.getElementById('sn2').style.color = t.color+'cc';
-  document.getElementById('fx-btn').style.borderColor = t.color;
-  document.getElementById('fx-btn').style.color = t.color;
-  // Update swatch active state
-  document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('active',s.dataset.id===t.id));
-  // Update dots color
+/* ── THEME ───────────────────────────────────────────────────────── */
+function applyTheme(t){
+  theme=t;
+  document.documentElement.style.setProperty('--c',t.c);
+  document.getElementById('ba').style.color=t.c;
+  document.getElementById('sc1').style.borderTopColor=t.c;
+  document.getElementById('sn1').style.color=t.c;
+  document.getElementById('sc2').style.borderTopColor=t.c+'66';
+  const fxBtn=document.getElementById('fx-btn');
+  fxBtn.style.borderColor=fxOn?t.c:'var(--border)';
+  fxBtn.style.color=fxOn?t.c:'var(--muted)';
+  document.querySelectorAll('.ttab').forEach(el=>el.classList.toggle('active',el.dataset.id===t.id));
   zones.forEach(z=>{
-    if(map.getLayer(`ly-${z.id}`)) map.setPaintProperty(`ly-${z.id}`,'circle-color',t.color);
+    if(map.getLayer(`l-${z.id}`)) map.setPaintProperty(`l-${z.id}`,'circle-color',t.c);
+    syncZoneDot(z);
+    syncSlider(z.id);
   });
-  // Update zone dots in list
-  zones.forEach(z=>{
-    const d=document.getElementById(`zdot-${z.id}`);
-    if(d){ d.style.background=z.inCoverage?t.color:'rgba(255,255,255,0.12)'; d.style.boxShadow=z.inCoverage?`0 0 6px ${t.color}`:'none'; }
-    const tog=document.getElementById(`ztog-${z.id}`);
-    if(tog){ tog.style.borderColor=z.inCoverage?t.color:'rgba(255,255,255,0.1)'; }
-  });
-  // Slider fills
-  ['Density','Blur','Bright'].forEach(k=>syncSliderUI(k));
 }
 
-// ── UI ────────────────────────────────────────────────────────────────────
-function buildUI() {
-  // Themes
-  const tr=document.getElementById('theme-row');
+/* ── UI ─────────────────────────────────────────────────────────── */
+function buildUI(){
+  // Theme tabs
+  const tr=document.getElementById('theme-tabs');
   THEMES.forEach(t=>{
-    const s=document.createElement('div');
-    s.className='swatch'+(t.id===theme.id?' active':'');
-    s.dataset.id=t.id;
-    s.style.background='#111';
-    s.innerHTML=`<div style="position:absolute;inset:0;border-radius:4px;${t.bg}"></div><span class="swatch-label">${t.name}</span>`;
-    s.onclick=()=>applyTheme(t);
-    tr.appendChild(s);
+    const el=document.createElement('div');
+    el.className='ttab'+(t.id===theme.id?' active':'');
+    el.dataset.id=t.id;
+    el.innerHTML=`<div class="ttab-swatch" style="background:${t.grad}"></div><div class="ttab-name">${t.name}</div>`;
+    el.onclick=()=>applyTheme(t);
+    tr.appendChild(el);
   });
 
   // Zone list
   const list=document.getElementById('zone-list');
   zones.forEach(z=>{
-    const row=document.createElement('div');
-    row.className='zone-item'+(z.inCoverage?' in-coverage':'');
-    row.id=`zrow-${z.id}`;
-    row.innerHTML=`
-      <div class="zi-dot" id="zdot-${z.id}" style="background:${z.inCoverage?theme.color:'rgba(255,255,255,0.12)'};box-shadow:${z.inCoverage?`0 0 6px ${theme.color}`:'none'}"></div>
-      <div class="zi-name">${z.name}</div>
-      <div class="zi-toggle${z.inCoverage?' on':''}" id="ztog-${z.id}" style="${z.inCoverage?`border-color:${theme.color}`:''}" onclick="toggleZone('${z.id}',event)"></div>`;
-    list.appendChild(row);
+    const el=document.createElement('div');
+    el.className='zi'; el.id=`zi-${z.id}`;
+    el.innerHTML=`
+      <div class="zi-top">
+        <div class="zi-dot" id="dot-${z.id}"></div>
+        <div class="zi-name">${z.name}</div>
+        <div class="zi-pct" id="pct-${z.id}">${z.cov}%</div>
+      </div>
+      <div class="dk">
+        <div class="dk-track"><div class="dk-fill" id="fill-${z.id}"></div></div>
+        <input type="range" min="0" max="100" step="1" value="${z.cov}" id="sl-${z.id}"
+          oninput="onZoneSlider('${z.id}',+this.value)">
+        <div class="dk-thumb" id="thumb-${z.id}"></div>
+      </div>`;
+    list.appendChild(el);
+    syncZoneDot(z);
+    syncSlider(z.id);
   });
 }
 
-function toggleZone(zid, e) {
-  e.stopPropagation();
+function syncZoneDot(z){
+  const dot=document.getElementById(`dot-${z.id}`);
+  if(!dot) return;
+  if(z.cov>0){ dot.style.background=theme.c; dot.style.boxShadow=`0 0 5px ${theme.c}`; }
+  else { dot.style.background='rgba(255,255,255,.1)'; dot.style.boxShadow='none'; }
+}
+
+function syncSlider(zid){
+  const sl=document.getElementById(`sl-${zid}`);
+  if(!sl) return;
+  const pct=((sl.value-sl.min)/(sl.max-sl.min))*100;
+  const fill=document.getElementById(`fill-${zid}`);
+  const thumb=document.getElementById(`thumb-${zid}`);
+  if(fill){ fill.style.width=pct+'%'; fill.style.background=pct>0?theme.c:'rgba(255,255,255,.1)'; }
+  if(thumb){
+    thumb.style.left=pct+'%';
+    if(pct>0){ thumb.style.background=theme.c; thumb.style.boxShadow=`0 0 7px ${theme.c}88`; }
+    else { thumb.style.background='rgba(255,255,255,.3)'; thumb.style.boxShadow='none'; }
+  }
+}
+
+function onZoneSlider(zid, val){
   const z=zones.find(z=>z.id===zid);
-  z.inCoverage=!z.inCoverage;
-  // Update layer visibility
-  if(map.getLayer(`ly-${zid}`)) map.setLayoutProperty(`ly-${zid}`,'visibility', (fxOn&&z.inCoverage)?'visible':'none');
-  // Update UI
-  const row=document.getElementById(`zrow-${zid}`);
-  row.classList.toggle('in-coverage',z.inCoverage);
-  const dot=document.getElementById(`zdot-${zid}`);
-  dot.style.background=z.inCoverage?theme.color:'rgba(255,255,255,0.12)';
-  dot.style.boxShadow=z.inCoverage?`0 0 6px ${theme.color}`:'none';
-  const tog=document.getElementById(`ztog-${zid}`);
-  tog.classList.toggle('on',z.inCoverage);
-  tog.style.borderColor=z.inCoverage?theme.color:'rgba(255,255,255,0.1)';
+  z.cov=val;
+  document.getElementById(`pct-${zid}`).textContent=val+'%';
+  document.getElementById(`pct-${zid}`).style.color=val>0?theme.c:'var(--muted)';
+  syncSlider(zid);
+  syncZoneDot(z);
+  buildLayer(z); // rebuild dots for this zone
   updateStats();
 }
 
-function updateStats() {
-  const on=zones.filter(z=>z.inCoverage);
-  document.getElementById('sn1').textContent=on.length;
-  document.getElementById('sn2').textContent=zones.length;
+function updateStats(){
+  const active=zones.filter(z=>z.cov>0);
+  document.getElementById('sn1').textContent=active.length;
 }
 
-function selectAll() { zones.forEach(z=>{ if(!z.inCoverage) toggleZone(z.id,{stopPropagation:()=>{}}); }); }
-function clearAll()  { zones.forEach(z=>{ if(z.inCoverage)  toggleZone(z.id,{stopPropagation:()=>{}}); }); }
-
-// ── SLIDERS ───────────────────────────────────────────────────────────────
-function initSliders() { ['Density','Blur','Bright'].forEach(k=>syncSliderUI(k)); }
-
-function onSlider(key, raw) {
-  const v=parseFloat(raw);
-  const labels={1:'Low',2:'Medium',3:'High'};
-  if(key==='Density') {
-    densityLevel=v;
-    document.getElementById('vDensity').textContent=labels[v];
-    // Rebuild all active zones with new density
-    zones.forEach(z=>buildZone(z));
-  } else if(key==='Blur') {
-    blurVal=v;
-    document.getElementById('vBlur').textContent=v.toFixed(2);
-    zones.forEach(z=>{ if(map.getLayer(`ly-${z.id}`)) map.setPaintProperty(`ly-${z.id}`,'circle-blur',v); });
-  } else if(key==='Bright') {
-    brightVal=v/100;
-    document.getElementById('vBright').textContent=Math.round(v)+'%';
-    zones.forEach(z=>{ if(map.getLayer(`ly-${z.id}`)) map.setPaintProperty(`ly-${z.id}`,'circle-opacity',['*',['get','op'],brightVal]); });
-  }
-  syncSliderUI(key);
-}
-
-function syncSliderUI(key) {
-  const sl=document.getElementById(`s${key}`);
-  if(!sl) return;
-  const pct=((parseFloat(sl.value)-parseFloat(sl.min))/(parseFloat(sl.max)-parseFloat(sl.min)))*100;
-  const fill=document.getElementById(`f${key}`);
-  const thumb=document.getElementById(`t${key}`);
-  if(fill){ fill.style.width=pct+'%'; fill.style.background=theme.color; }
-  if(thumb){ thumb.style.left=pct+'%'; thumb.style.background=theme.color; thumb.style.boxShadow=`0 0 7px ${theme.color}80`; }
-}
-
-// ── FX / DOWNLOAD ─────────────────────────────────────────────────────────
-function toggleFX() {
+/* ── FX TOGGLE ───────────────────────────────────────────────────── */
+function toggleFX(){
   fxOn=!fxOn;
-  zones.forEach(z=>{ if(map.getLayer(`ly-${z.id}`)) map.setLayoutProperty(`ly-${z.id}`,'visibility',(fxOn&&z.inCoverage)?'visible':'none'); });
+  zones.forEach(z=>{ if(map.getLayer(`l-${z.id}`)) map.setLayoutProperty(`l-${z.id}`,'visibility',fxOn?'visible':'none'); });
   const btn=document.getElementById('fx-btn');
   btn.classList.toggle('on',fxOn);
-  btn.style.borderColor=fxOn?theme.color:'var(--border)';
-  btn.style.color=fxOn?theme.color:'var(--muted)';
+  btn.style.borderColor=fxOn?theme.c:'var(--border)';
+  btn.style.color=fxOn?theme.c:'var(--muted)';
 }
 
-function downloadPNG() {
+/* ── DOWNLOAD ────────────────────────────────────────────────────── */
+function downloadPNG(){
   map.once('render',()=>{
     const a=document.createElement('a');
     a.href=map.getCanvas().toDataURL('image/png');
     a.download=`raipur-${theme.id}-${Date.now()}.png`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200);
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    const t=document.getElementById('toast');
+    t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);
   });
   map.triggerRepaint();
 }
