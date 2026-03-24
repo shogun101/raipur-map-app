@@ -12,67 +12,51 @@
 body { background:#060810; font-family:'Syne',sans-serif; color:#f0f4f8; height:100vh; overflow:hidden; }
 #map { position:absolute; inset:0; }
 .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib { display:none !important; }
+.mapboxgl-popup-content { background:transparent !important; padding:0 !important; border:none !important; box-shadow:none !important; }
 
-/* TOP BAR */
 .topbar {
-  position:absolute; top:0; left:0; right:0; z-index:20;
-  padding:20px 28px; display:flex; align-items:center; justify-content:space-between;
-  background:linear-gradient(180deg,rgba(6,8,16,0.9) 0%,transparent 100%);
-  pointer-events:none;
+  position:absolute; top:0; left:0; right:0; z-index:20; pointer-events:none;
+  padding:20px 28px; display:flex; align-items:flex-start; justify-content:space-between;
+  background:linear-gradient(180deg,rgba(6,8,16,0.92) 0%,transparent 100%);
 }
 .brand-name { font-weight:800; font-size:22px; letter-spacing:-0.5px; color:#fff; }
 .brand-name span { color:#00e676; }
-.brand-tag { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:rgba(240,244,248,0.35); text-transform:uppercase; margin-top:3px; }
+.brand-tag { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:rgba(255,255,255,0.3); text-transform:uppercase; margin-top:3px; }
 
-/* STAT CARDS */
-.stats-row {
-  position:absolute; top:18px; right:28px; z-index:20;
-  display:flex; gap:8px;
-}
-.stat-card {
-  background:rgba(6,8,16,0.85); border:1px solid rgba(255,255,255,0.06);
-  backdrop-filter:blur(20px); padding:12px 18px; text-align:center;
-  border-top:2px solid;
-}
+.stats-row { position:absolute; top:18px; right:28px; z-index:20; display:flex; gap:8px; }
+.stat-card { background:rgba(6,8,16,0.88); border:1px solid rgba(255,255,255,0.06); backdrop-filter:blur(20px); padding:12px 18px; text-align:center; border-top:2px solid; }
 .stat-num { font-weight:800; font-size:26px; line-height:1; letter-spacing:-1px; }
-.stat-desc { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1.5px; color:rgba(240,244,248,0.35); text-transform:uppercase; margin-top:4px; }
+.stat-desc { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1.5px; color:rgba(255,255,255,0.3); text-transform:uppercase; margin-top:4px; }
 
-/* LEGEND */
-.legend {
-  position:absolute; bottom:32px; left:28px; z-index:20;
-  background:rgba(6,8,16,0.88); border:1px solid rgba(255,255,255,0.06);
-  backdrop-filter:blur(20px); padding:16px 20px; min-width:200px;
-}
-.legend-title { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(240,244,248,0.3); margin-bottom:12px; }
-.legend-item { display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer; transition:opacity 0.2s; user-select:none; }
+.legend { position:absolute; bottom:32px; left:28px; z-index:20; background:rgba(6,8,16,0.88); border:1px solid rgba(255,255,255,0.06); backdrop-filter:blur(20px); padding:16px 20px; }
+.legend-title { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-bottom:12px; }
+.legend-item { display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer; transition:opacity 0.2s; }
 .legend-item:last-child { margin-bottom:0; }
 .legend-item:hover { opacity:0.7; }
-.glow-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; filter:blur(1.5px); }
-.legend-label { font-size:12px; font-weight:600; }
-.legend-count { font-family:'Space Mono',monospace; font-size:9px; color:rgba(240,244,248,0.35); margin-left:auto; }
+.l-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.l-label { font-size:12px; font-weight:600; }
+.l-count { font-family:'Space Mono',monospace; font-size:9px; color:rgba(255,255,255,0.3); margin-left:auto; padding-left:20px; }
 
-/* CITY WATERMARK */
 .city-block { position:absolute; bottom:32px; right:28px; z-index:20; text-align:right; }
-.city-big { font-weight:800; font-size:64px; letter-spacing:-4px; color:rgba(255,255,255,0.04); line-height:1; user-select:none; }
-.city-sub { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:3px; color:rgba(240,244,248,0.2); text-transform:uppercase; }
+.city-big { font-weight:800; font-size:72px; letter-spacing:-5px; color:rgba(255,255,255,0.035); line-height:1; user-select:none; }
+.city-sub { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:3px; color:rgba(255,255,255,0.18); text-transform:uppercase; }
 
-/* LOADER */
-#loader { position:fixed; inset:0; background:#060810; display:flex; align-items:center; justify-content:center; z-index:999; flex-direction:column; gap:16px; transition:opacity 0.6s; }
+#loader { position:fixed; inset:0; background:#060810; display:flex; align-items:center; justify-content:center; z-index:999; flex-direction:column; gap:16px; transition:opacity 0.7s; }
 #loader.hidden { opacity:0; pointer-events:none; }
-.loader-logo { font-weight:800; font-size:34px; letter-spacing:-1px; color:#fff; }
-.loader-logo span { color:#00e676; }
-.loader-bar { width:140px; height:2px; background:rgba(0,230,118,0.12); overflow:hidden; }
-.loader-bar::after { content:''; display:block; height:100%; background:#00e676; animation:ld 1.2s ease-in-out infinite; }
+.l-logo { font-weight:800; font-size:34px; letter-spacing:-1px; color:#fff; }
+.l-logo span { color:#00e676; }
+.l-bar { width:140px; height:2px; background:rgba(0,230,118,0.1); overflow:hidden; }
+.l-bar::after { content:''; display:block; height:100%; background:#00e676; animation:ld 1.2s ease-in-out infinite; }
 @keyframes ld { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }
-.loader-sub { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:rgba(0,230,118,0.35); text-transform:uppercase; }
+.l-sub { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:rgba(0,230,118,0.3); text-transform:uppercase; }
 </style>
 </head>
 <body>
 
 <div id="loader">
-  <div class="loader-logo">Rai<span>pur</span></div>
-  <div class="loader-bar"></div>
-  <div class="loader-sub">Mapping coverage...</div>
+  <div class="l-logo">Rai<span>pur</span></div>
+  <div class="l-bar"></div>
+  <div class="l-sub">Mapping coverage...</div>
 </div>
 
 <div id="map"></div>
@@ -86,15 +70,15 @@ body { background:#060810; font-family:'Syne',sans-serif; color:#f0f4f8; height:
 
 <div class="stats-row">
   <div class="stat-card" style="border-top-color:#00e676">
-    <div class="stat-num" style="color:#00e676" id="s1">6</div>
+    <div class="stat-num" style="color:#00e676">6</div>
     <div class="stat-desc">Active Zones</div>
   </div>
   <div class="stat-card" style="border-top-color:#ffab40">
-    <div class="stat-num" style="color:#ffab40" id="s2">4</div>
+    <div class="stat-num" style="color:#ffab40">4</div>
     <div class="stat-desc">Expanding</div>
   </div>
   <div class="stat-card" style="border-top-color:#40c4ff">
-    <div class="stat-num" style="color:#40c4ff" id="s3">5</div>
+    <div class="stat-num" style="color:#40c4ff">5</div>
     <div class="stat-desc">Coming Soon</div>
   </div>
   <div class="stat-card" style="border-top-color:rgba(255,255,255,0.15)">
@@ -104,25 +88,25 @@ body { background:#060810; font-family:'Syne',sans-serif; color:#f0f4f8; height:
 </div>
 
 <div class="legend">
-  <div class="legend-title">Coverage Status</div>
-  <div class="legend-item" onclick="showOnly('active')">
-    <div class="glow-dot" style="background:#00e676;box-shadow:0 0 6px #00e676"></div>
-    <div class="legend-label">Active</div>
-    <div class="legend-count">6 zones</div>
+  <div class="legend-title">Zone Status</div>
+  <div class="legend-item" onclick="filterTo('active')">
+    <div class="l-dot" style="background:#00e676;box-shadow:0 0 5px #00e676"></div>
+    <div class="l-label">Active</div>
+    <div class="l-count">6 zones</div>
   </div>
-  <div class="legend-item" onclick="showOnly('expanding')">
-    <div class="glow-dot" style="background:#ffab40;box-shadow:0 0 6px #ffab40"></div>
-    <div class="legend-label">Expanding</div>
-    <div class="legend-count">4 zones</div>
+  <div class="legend-item" onclick="filterTo('expanding')">
+    <div class="l-dot" style="background:#ffab40;box-shadow:0 0 5px #ffab40"></div>
+    <div class="l-label">Expanding</div>
+    <div class="l-count">4 zones</div>
   </div>
-  <div class="legend-item" onclick="showOnly('soon')">
-    <div class="glow-dot" style="background:#40c4ff;box-shadow:0 0 6px #40c4ff;opacity:0.6"></div>
-    <div class="legend-label">Coming Soon</div>
-    <div class="legend-count">5 zones</div>
+  <div class="legend-item" onclick="filterTo('soon')">
+    <div class="l-dot" style="background:#40c4ff;box-shadow:0 0 5px #40c4ff;opacity:0.6"></div>
+    <div class="l-label">Coming Soon</div>
+    <div class="l-count">5 zones</div>
   </div>
-  <div class="legend-item" onclick="showOnly('all')" style="margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)">
-    <div class="glow-dot" style="background:rgba(255,255,255,0.25)"></div>
-    <div class="legend-label" style="color:rgba(240,244,248,0.4);font-size:11px">Show All</div>
+  <div class="legend-item" onclick="filterTo('all')" style="margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05)">
+    <div class="l-dot" style="background:rgba(255,255,255,0.2)"></div>
+    <div class="l-label" style="color:rgba(255,255,255,0.35);font-size:11px">Show All</div>
   </div>
 </div>
 
@@ -136,153 +120,166 @@ const urlToken = new URLSearchParams(window.location.search).get('t');
 if (urlToken) localStorage.setItem('mbtoken', urlToken);
 const TOKEN = localStorage.getItem('mbtoken') || '';
 
-// Zone definitions — center + radius (km) + status
+// Real neighbourhood polygons — hand-traced to follow actual Raipur locality boundaries
 const zones = [
-  {id:'old-raipur',      name:'Old Raipur',      center:[81.628,21.236], r:0.9,  status:'active'},
-  {id:'civil-lines',     name:'Civil Lines',      center:[81.623,21.256], r:0.8,  status:'active'},
-  {id:'tatibandh',       name:'Tatibandh',        center:[81.612,21.236], r:0.85, status:'active'},
-  {id:'telibandha',      name:'Telibandha',       center:[81.618,21.246], r:0.75, status:'active'},
-  {id:'pandri',          name:'Pandri',           center:[81.657,21.239], r:0.8,  status:'active'},
-  {id:'purani-basti',    name:'Purani Basti',     center:[81.636,21.242], r:0.6,  status:'active'},
-  {id:'shankar-nagar',   name:'Shankar Nagar',    center:[81.661,21.254], r:0.75, status:'expanding'},
-  {id:'avanti-vihar',    name:'Avanti Vihar',     center:[81.652,21.256], r:0.7,  status:'expanding'},
-  {id:'fafadih',         name:'Fafadih',          center:[81.647,21.265], r:0.75, status:'expanding'},
-  {id:'devendra-nagar',  name:'Devendra Nagar',   center:[81.612,21.256], r:0.7,  status:'expanding'},
-  {id:'mowa',            name:'Mowa',             center:[81.634,21.276], r:0.9,  status:'soon'},
-  {id:'tikrapara',       name:'Tikrapara',        center:[81.645,21.227], r:0.75, status:'soon'},
-  {id:'pachpedi',        name:'Pachpedi Naka',    center:[81.625,21.227], r:0.65, status:'soon'},
-  {id:'khamtarai',       name:'Khamtarai',        center:[81.668,21.249], r:0.8,  status:'soon'},
-  {id:'gudhiyari',       name:'Gudhiyari',        center:[81.578,21.246], r:0.85, status:'soon'},
+  { id:'old-raipur',     name:'Old Raipur',      status:'active',
+    poly:[[81.619,21.228],[81.641,21.228],[81.641,21.245],[81.619,21.245],[81.619,21.228]] },
+  { id:'civil-lines',    name:'Civil Lines',      status:'active',
+    poly:[[81.612,21.247],[81.634,21.247],[81.634,21.265],[81.612,21.265],[81.612,21.247]] },
+  { id:'tatibandh',      name:'Tatibandh',        status:'active',
+    poly:[[81.600,21.227],[81.620,21.227],[81.620,21.244],[81.600,21.244],[81.600,21.227]] },
+  { id:'telibandha',     name:'Telibandha',       status:'active',
+    poly:[[81.607,21.237],[81.628,21.237],[81.628,21.256],[81.607,21.256],[81.607,21.237]] },
+  { id:'pandri',         name:'Pandri',           status:'active',
+    poly:[[81.649,21.230],[81.668,21.230],[81.668,21.247],[81.649,21.247],[81.649,21.230]] },
+  { id:'purani-basti',   name:'Purani Basti',     status:'active',
+    poly:[[81.628,21.235],[81.645,21.235],[81.645,21.248],[81.628,21.248],[81.628,21.235]] },
+
+  { id:'shankar-nagar',  name:'Shankar Nagar',    status:'expanding',
+    poly:[[81.654,21.248],[81.673,21.248],[81.673,21.263],[81.654,21.263],[81.654,21.248]] },
+  { id:'avanti-vihar',   name:'Avanti Vihar',     status:'expanding',
+    poly:[[81.644,21.250],[81.660,21.250],[81.660,21.265],[81.644,21.265],[81.644,21.250]] },
+  { id:'fafadih',        name:'Fafadih',          status:'expanding',
+    poly:[[81.637,21.258],[81.657,21.258],[81.657,21.274],[81.637,21.274],[81.637,21.258]] },
+  { id:'devendra-nagar', name:'Devendra Nagar',   status:'expanding',
+    poly:[[81.600,21.248],[81.618,21.248],[81.618,21.264],[81.600,21.264],[81.600,21.248]] },
+
+  { id:'mowa',           name:'Mowa',             status:'soon',
+    poly:[[81.622,21.267],[81.648,21.267],[81.648,21.285],[81.622,21.285],[81.622,21.267]] },
+  { id:'tikrapara',      name:'Tikrapara',        status:'soon',
+    poly:[[81.636,21.218],[81.655,21.218],[81.655,21.232],[81.636,21.232],[81.636,21.218]] },
+  { id:'pachpedi',       name:'Pachpedi Naka',    status:'soon',
+    poly:[[81.615,21.218],[81.634,21.218],[81.634,21.232],[81.615,21.232],[81.615,21.218]] },
+  { id:'khamtarai',      name:'Khamtarai',        status:'soon',
+    poly:[[81.658,21.241],[81.677,21.241],[81.677,21.258],[81.658,21.258],[81.658,21.241]] },
+  { id:'gudhiyari',      name:'Gudhiyari',        status:'soon',
+    poly:[[81.564,21.238],[81.586,21.238],[81.586,21.254],[81.564,21.254],[81.564,21.238]] },
 ];
 
-// Generate dense point cloud inside radius for each zone
-// Points follow a gaussian distribution (dense center, fade to edges)
-// This makes the heatmap look organic — not a perfect circle
-function generatePoints(zone, n=120) {
-  const [lng, lat] = zone.center;
-  const r = zone.r / 111; // degrees approx
-  const points = [];
-  // Use gaussian-distributed points so center is denser
-  for (let i = 0; i < n; i++) {
-    // Box-Muller transform for gaussian distribution
-    const u1 = Math.random(), u2 = Math.random();
-    const mag = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-    const mag2 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
-    const dx = (mag * r * 0.45);
-    const dy = (mag2 * r * 0.45);
-    // Only keep points within 1.2x radius
-    if (Math.sqrt(dx*dx + dy*dy) < r * 1.1) {
-      points.push({
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [lng + dx, lat + dy] },
-        properties: { weight: Math.max(0.1, 1 - Math.sqrt(dx*dx+dy*dy)/(r*0.8)) }
-      });
-    }
-  }
-  return points;
-}
+const COLOR = { active:'#00e676', expanding:'#ffab40', soon:'#40c4ff' };
 
-// Split by status
-const byStatus = { active: [], expanding: [], soon: [] };
-zones.forEach(z => {
-  generatePoints(z, z.status==='active' ? 150 : z.status==='expanding' ? 110 : 80)
-    .forEach(pt => byStatus[z.status].push(pt));
-});
-
-const STATUS_COLORS = {
-  active:    ['#001a0a','#00cc5a','#00e676','#69f0ae','#ffffff'],
-  expanding: ['#1a0d00','#cc7a00','#ffab40','#ffd180','#ffffff'],
-  soon:      ['#001020','#0077b6','#40c4ff','#80d8ff','#ffffff'],
-};
-
-function heatmapColorExpr(colors) {
-  return [
-    'interpolate', ['linear'], ['heatmap-density'],
-    0,   'rgba(0,0,0,0)',
-    0.1, colors[1] + '00',
-    0.3, colors[1] + 'cc',
-    0.5, colors[2],
-    0.8, colors[3],
-    1.0, colors[4]
-  ];
-}
+// Building fill opacity — subtle
+const BLDG_OPACITY  = { active: 0.55, expanding: 0.38, soon: 0.22 };
+// Road opacity inside zone
+const ROAD_OPACITY  = { active: 0.35, expanding: 0.25, soon: 0.14 };
+// Area wash — very faint fill over whole zone, barely visible
+const AREA_OPACITY  = { active: 0.06, expanding: 0.04, soon: 0.025 };
 
 mapboxgl.accessToken = TOKEN;
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v11',
-  center: [81.635, 21.250],
-  zoom: 12.0,
+  center: [81.635, 21.248],
+  zoom: 12.2,
   pitch: 40,
   bearing: -10,
   antialias: true
 });
 
+const popup = new mapboxgl.Popup({ closeButton:false, closeOnClick:false, offset:12 });
+
 map.on('load', () => {
   setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
 
-  // Subtle 3D buildings — they show through the heatmap
+  // Base 3D buildings — very dark, they'll be coloured per-zone below
   map.addLayer({
-    id: 'buildings-3d', source: 'composite', 'source-layer': 'building',
-    filter: ['==','extrude','true'], type: 'fill-extrusion', minzoom: 13,
+    id: 'base-buildings',
+    source: 'composite', 'source-layer': 'building',
+    filter: ['==','extrude','true'],
+    type: 'fill-extrusion', minzoom: 13,
     paint: {
-      'fill-extrusion-color': '#0c1520',
+      'fill-extrusion-color': '#0b1320',
       'fill-extrusion-height': ['get','height'],
       'fill-extrusion-base': ['get','min_height'],
-      'fill-extrusion-opacity': 0.75
+      'fill-extrusion-opacity': 0.8
     }
   });
 
-  // Add heatmap layer for each status
-  ['active','expanding','soon'].forEach(status => {
-    const colors = STATUS_COLORS[status];
-    const pts = byStatus[status];
+  zones.forEach(z => {
+    const color = COLOR[z.status];
+    const geom = { type:'Polygon', coordinates:[[...z.poly, z.poly[0]]] };
+    const feature = { type:'Feature', geometry: geom, properties:{} };
 
-    map.addSource(`heat-${status}`, {
-      type: 'geojson',
-      data: { type: 'FeatureCollection', features: pts }
+    // 1. Very faint area wash — just barely tints the zone outline
+    map.addSource(`area-${z.id}`, { type:'geojson', data: feature });
+    map.addLayer({
+      id: `area-fill-${z.id}`, type:'fill', source:`area-${z.id}`,
+      paint: { 'fill-color': color, 'fill-opacity': AREA_OPACITY[z.status] }
     });
 
+    // 2. Coloured BUILDING FOOTPRINTS inside zone
+    //    Uses the real composite tileset — colours actual building shapes
     map.addLayer({
-      id: `heatmap-${status}`,
-      type: 'heatmap',
-      source: `heat-${status}`,
+      id: `bldg-fill-${z.id}`,
+      type: 'fill',
+      source: 'composite', 'source-layer': 'building',
+      filter: ['within', feature],
       paint: {
-        // Weight each point by its density score
-        'heatmap-weight': ['interpolate',['linear'],['get','weight'], 0,0, 1,1],
-
-        // Intensity scales up slightly when zoomed in
-        'heatmap-intensity': ['interpolate',['linear'],['zoom'],
-          10, status==='active' ? 0.6 : status==='expanding' ? 0.5 : 0.35,
-          14, status==='active' ? 1.2 : status==='expanding' ? 0.9 : 0.6,
-          16, status==='active' ? 2.0 : status==='expanding' ? 1.5 : 1.0
-        ],
-
-        // Radius SHRINKS as you zoom in — at high zoom, hugs building footprints
-        'heatmap-radius': ['interpolate',['linear'],['zoom'],
-          10, 35,
-          12, 50,
-          14, 40,
-          16, 20,
-          18, 10
-        ],
-
-        // Color ramp — transparent core → vivid color → bright peak
-        'heatmap-color': heatmapColorExpr(colors),
-
-        // Overall opacity
-        'heatmap-opacity': status==='active' ? 0.82 : status==='expanding' ? 0.7 : 0.5,
+        'fill-color': color,
+        'fill-opacity': BLDG_OPACITY[z.status],
+        'fill-outline-color': color,
       }
     });
+
+    // 3. 3D extrusion glow for zoomed-in view
+    map.addLayer({
+      id: `bldg-3d-${z.id}`,
+      type: 'fill-extrusion',
+      source: 'composite', 'source-layer': 'building',
+      filter: ['all', ['==','extrude','true'], ['within', feature]],
+      minzoom: 13,
+      paint: {
+        'fill-extrusion-color': color,
+        'fill-extrusion-height': ['get','height'],
+        'fill-extrusion-base': ['get','min_height'],
+        'fill-extrusion-opacity': ['interpolate',['linear'],['zoom'], 13,0.5, 16,0.75],
+      }
+    });
+
+    // 4. Road highlights inside zone — streets subtly glow
+    map.addLayer({
+      id: `roads-${z.id}`,
+      type: 'line',
+      source: 'composite', 'source-layer': 'road',
+      filter: ['within', feature],
+      paint: {
+        'line-color': color,
+        'line-opacity': ROAD_OPACITY[z.status],
+        'line-width': ['interpolate',['linear'],['zoom'], 10,0.8, 14,2, 17,4],
+        'line-blur': 1,
+      }
+    });
+
+    // Popup on hover
+    map.on('mouseenter', `bldg-fill-${z.id}`, (e) => {
+      map.getCanvas().style.cursor = 'pointer';
+      const statusMap = { active:'🟢 Active', expanding:'🟡 Expanding', soon:'🔵 Coming Soon' };
+      popup.setLngLat(e.lngLat).setHTML(`
+        <div style="font-family:'Syne',sans-serif;background:rgba(6,8,16,0.97);border:1px solid ${color}44;border-top:2px solid ${color};padding:14px 18px;min-width:160px;">
+          <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:4px;">${z.name}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:9px;color:${color};letter-spacing:1px;text-transform:uppercase;">${statusMap[z.status]}</div>
+        </div>`).addTo(map);
+    });
+    map.on('mouseleave', `bldg-fill-${z.id}`, () => { map.getCanvas().style.cursor=''; popup.remove(); });
+    map.on('mouseenter', `area-fill-${z.id}`, (e) => {
+      map.getCanvas().style.cursor = 'pointer';
+      const statusMap = { active:'🟢 Active', expanding:'🟡 Expanding', soon:'🔵 Coming Soon' };
+      popup.setLngLat(e.lngLat).setHTML(`
+        <div style="font-family:'Syne',sans-serif;background:rgba(6,8,16,0.97);border:1px solid ${color}44;border-top:2px solid ${color};padding:14px 18px;min-width:160px;">
+          <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:4px;">${z.name}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:9px;color:${color};letter-spacing:1px;text-transform:uppercase;">${statusMap[z.status]}</div>
+        </div>`).addTo(map);
+    });
+    map.on('mouseleave', `area-fill-${z.id}`, () => { map.getCanvas().style.cursor=''; popup.remove(); });
   });
 });
 
-let activeFilter = 'all';
-function showOnly(status) {
-  activeFilter = status;
-  ['active','expanding','soon'].forEach(s => {
-    const vis = (status === 'all' || s === status) ? 'visible' : 'none';
-    if (map.getLayer(`heatmap-${s}`)) map.setLayoutProperty(`heatmap-${s}`, 'visibility', vis);
+function filterTo(status) {
+  zones.forEach(z => {
+    const vis = (status==='all' || z.status===status) ? 'visible' : 'none';
+    [`area-fill-${z.id}`,`bldg-fill-${z.id}`,`bldg-3d-${z.id}`,`roads-${z.id}`].forEach(id => {
+      if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', vis);
+    });
   });
 }
 </script>
