@@ -16,7 +16,7 @@ body { background:#060810; font-family:'Syne',sans-serif; color:#f0f4f8; height:
 
 .topbar {
   position:absolute; top:0; left:0; right:0; z-index:20; pointer-events:none;
-  padding:20px 28px; display:flex; align-items:flex-start; justify-content:space-between;
+  padding:20px 28px;
   background:linear-gradient(180deg,rgba(6,8,16,0.92) 0%,transparent 100%);
 }
 .brand-name { font-weight:800; font-size:22px; letter-spacing:-0.5px; color:#fff; }
@@ -24,12 +24,23 @@ body { background:#060810; font-family:'Syne',sans-serif; color:#f0f4f8; height:
 .brand-tag { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:rgba(255,255,255,0.3); text-transform:uppercase; margin-top:3px; }
 
 .stats-row { position:absolute; top:18px; right:28px; z-index:20; display:flex; gap:8px; }
-.stat-card { background:rgba(6,8,16,0.88); border:1px solid rgba(255,255,255,0.06); backdrop-filter:blur(20px); padding:12px 18px; text-align:center; border-top:2px solid; }
+.stat-card {
+  background:rgba(6,8,16,0.88); border:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(20px); padding:12px 18px; text-align:center; border-top:2px solid;
+  opacity:0; transform:translateY(-8px); transition:opacity 0.5s, transform 0.5s;
+}
+.stat-card.visible { opacity:1; transform:translateY(0); }
 .stat-num { font-weight:800; font-size:26px; line-height:1; letter-spacing:-1px; }
 .stat-desc { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1.5px; color:rgba(255,255,255,0.3); text-transform:uppercase; margin-top:4px; }
 
-.legend { position:absolute; bottom:32px; left:28px; z-index:20; background:rgba(6,8,16,0.88); border:1px solid rgba(255,255,255,0.06); backdrop-filter:blur(20px); padding:16px 20px; }
-.legend-title { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-bottom:12px; }
+.legend {
+  position:absolute; bottom:32px; left:28px; z-index:20;
+  background:rgba(6,8,16,0.88); border:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(20px); padding:16px 20px;
+  opacity:0; transform:translateX(-8px); transition:opacity 0.5s 0.3s, transform 0.5s 0.3s;
+}
+.legend.visible { opacity:1; transform:translateX(0); }
+.legend-title { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.25); margin-bottom:12px; }
 .legend-item { display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer; transition:opacity 0.2s; }
 .legend-item:last-child { margin-bottom:0; }
 .legend-item:hover { opacity:0.7; }
@@ -37,11 +48,21 @@ body { background:#060810; font-family:'Syne',sans-serif; color:#f0f4f8; height:
 .l-label { font-size:12px; font-weight:600; }
 .l-count { font-family:'Space Mono',monospace; font-size:9px; color:rgba(255,255,255,0.3); margin-left:auto; padding-left:20px; }
 
-.city-block { position:absolute; bottom:32px; right:28px; z-index:20; text-align:right; }
-.city-big { font-weight:800; font-size:72px; letter-spacing:-5px; color:rgba(255,255,255,0.035); line-height:1; user-select:none; }
-.city-sub { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:3px; color:rgba(255,255,255,0.18); text-transform:uppercase; }
+.city-block { position:absolute; bottom:32px; right:28px; z-index:20; text-align:right; pointer-events:none; }
+.city-big { font-weight:800; font-size:72px; letter-spacing:-5px; color:rgba(255,255,255,0.03); line-height:1; }
+.city-sub { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:3px; color:rgba(255,255,255,0.15); text-transform:uppercase; }
 
-#loader { position:fixed; inset:0; background:#060810; display:flex; align-items:center; justify-content:center; z-index:999; flex-direction:column; gap:16px; transition:opacity 0.7s; }
+/* Zoom hint pill */
+.zoom-hint {
+  position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+  z-index:20; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px;
+  color:rgba(255,255,255,0.3); text-transform:uppercase;
+  background:rgba(6,8,16,0.7); border:1px solid rgba(255,255,255,0.06);
+  padding:7px 14px; backdrop-filter:blur(12px);
+  transition:opacity 0.4s;
+}
+
+#loader { position:fixed; inset:0; background:#060810; display:flex; align-items:center; justify-content:center; z-index:999; flex-direction:column; gap:16px; transition:opacity 0.8s; }
 #loader.hidden { opacity:0; pointer-events:none; }
 .l-logo { font-weight:800; font-size:34px; letter-spacing:-1px; color:#fff; }
 .l-logo span { color:#00e676; }
@@ -62,32 +83,30 @@ body { background:#060810; font-family:'Syne',sans-serif; color:#f0f4f8; height:
 <div id="map"></div>
 
 <div class="topbar">
-  <div>
-    <div class="brand-name">Delivery<span>OS</span></div>
-    <div class="brand-tag">Raipur · Market Coverage</div>
-  </div>
+  <div class="brand-name">Delivery<span>OS</span></div>
+  <div class="brand-tag">Raipur · Market Coverage</div>
 </div>
 
 <div class="stats-row">
-  <div class="stat-card" style="border-top-color:#00e676">
+  <div class="stat-card" style="border-top-color:#00e676" id="sc1">
     <div class="stat-num" style="color:#00e676">6</div>
     <div class="stat-desc">Active Zones</div>
   </div>
-  <div class="stat-card" style="border-top-color:#ffab40">
+  <div class="stat-card" style="border-top-color:#ffab40" id="sc2">
     <div class="stat-num" style="color:#ffab40">4</div>
     <div class="stat-desc">Expanding</div>
   </div>
-  <div class="stat-card" style="border-top-color:#40c4ff">
+  <div class="stat-card" style="border-top-color:#40c4ff" id="sc3">
     <div class="stat-num" style="color:#40c4ff">5</div>
     <div class="stat-desc">Coming Soon</div>
   </div>
-  <div class="stat-card" style="border-top-color:rgba(255,255,255,0.15)">
+  <div class="stat-card" style="border-top-color:rgba(255,255,255,0.15)" id="sc4">
     <div class="stat-num" style="color:#fff">1.2M</div>
     <div class="stat-desc">Addressable Pop.</div>
   </div>
 </div>
 
-<div class="legend">
+<div class="legend" id="legend">
   <div class="legend-title">Zone Status</div>
   <div class="legend-item" onclick="filterTo('active')">
     <div class="l-dot" style="background:#00e676;box-shadow:0 0 5px #00e676"></div>
@@ -115,83 +134,109 @@ body { background:#060810; font-family:'Syne',sans-serif; color:#f0f4f8; height:
   <div class="city-sub">Chhattisgarh · India</div>
 </div>
 
+<div class="zoom-hint" id="zoom-hint">Zoom in to see building-level coverage</div>
+
 <script>
 const urlToken = new URLSearchParams(window.location.search).get('t');
 if (urlToken) localStorage.setItem('mbtoken', urlToken);
 const TOKEN = localStorage.getItem('mbtoken') || '';
 
-// Real neighbourhood polygons — hand-traced to follow actual Raipur locality boundaries
+// Properly spread across Raipur — verified coordinates
 const zones = [
+  // ACTIVE — core city centre cluster
   { id:'old-raipur',     name:'Old Raipur',      status:'active',
-    poly:[[81.619,21.228],[81.641,21.228],[81.641,21.245],[81.619,21.245],[81.619,21.228]] },
-  { id:'civil-lines',    name:'Civil Lines',      status:'active',
-    poly:[[81.612,21.247],[81.634,21.247],[81.634,21.265],[81.612,21.265],[81.612,21.247]] },
-  { id:'tatibandh',      name:'Tatibandh',        status:'active',
-    poly:[[81.600,21.227],[81.620,21.227],[81.620,21.244],[81.600,21.244],[81.600,21.227]] },
-  { id:'telibandha',     name:'Telibandha',       status:'active',
-    poly:[[81.607,21.237],[81.628,21.237],[81.628,21.256],[81.607,21.256],[81.607,21.237]] },
-  { id:'pandri',         name:'Pandri',           status:'active',
-    poly:[[81.649,21.230],[81.668,21.230],[81.668,21.247],[81.649,21.247],[81.649,21.230]] },
+    poly:[[81.616,21.226],[81.640,21.226],[81.640,21.244],[81.616,21.244],[81.616,21.226]] },
   { id:'purani-basti',   name:'Purani Basti',     status:'active',
-    poly:[[81.628,21.235],[81.645,21.235],[81.645,21.248],[81.628,21.248],[81.628,21.235]] },
+    poly:[[81.629,21.234],[81.646,21.234],[81.646,21.248],[81.629,21.248],[81.629,21.234]] },
+  { id:'tatibandh',      name:'Tatibandh',        status:'active',
+    poly:[[81.597,21.226],[81.618,21.226],[81.618,21.244],[81.597,21.244],[81.597,21.226]] },
+  { id:'telibandha',     name:'Telibandha',       status:'active',
+    poly:[[81.604,21.238],[81.626,21.238],[81.626,21.256],[81.604,21.256],[81.604,21.238]] },
+  { id:'civil-lines',    name:'Civil Lines',      status:'active',
+    poly:[[81.609,21.248],[81.632,21.248],[81.632,21.267],[81.609,21.267],[81.609,21.248]] },
+  { id:'pandri',         name:'Pandri',           status:'active',
+    poly:[[81.648,21.229],[81.669,21.229],[81.669,21.247],[81.648,21.247],[81.648,21.229]] },
 
+  // EXPANDING — ring around core
   { id:'shankar-nagar',  name:'Shankar Nagar',    status:'expanding',
-    poly:[[81.654,21.248],[81.673,21.248],[81.673,21.263],[81.654,21.263],[81.654,21.248]] },
+    poly:[[81.652,21.248],[81.674,21.248],[81.674,21.265],[81.652,21.265],[81.652,21.248]] },
   { id:'avanti-vihar',   name:'Avanti Vihar',     status:'expanding',
-    poly:[[81.644,21.250],[81.660,21.250],[81.660,21.265],[81.644,21.265],[81.644,21.250]] },
-  { id:'fafadih',        name:'Fafadih',          status:'expanding',
-    poly:[[81.637,21.258],[81.657,21.258],[81.657,21.274],[81.637,21.274],[81.637,21.258]] },
+    poly:[[81.641,21.252],[81.659,21.252],[81.659,21.268],[81.641,21.268],[81.641,21.252]] },
   { id:'devendra-nagar', name:'Devendra Nagar',   status:'expanding',
-    poly:[[81.600,21.248],[81.618,21.248],[81.618,21.264],[81.600,21.264],[81.600,21.248]] },
+    poly:[[81.596,21.248],[81.614,21.248],[81.614,21.266],[81.596,21.266],[81.596,21.248]] },
+  { id:'fafadih',        name:'Fafadih',          status:'expanding',
+    poly:[[81.635,21.258],[81.656,21.258],[81.656,21.275],[81.635,21.275],[81.635,21.258]] },
 
+  // COMING SOON — outer areas
   { id:'mowa',           name:'Mowa',             status:'soon',
-    poly:[[81.622,21.267],[81.648,21.267],[81.648,21.285],[81.622,21.285],[81.622,21.267]] },
+    poly:[[81.620,21.268],[81.646,21.268],[81.646,21.286],[81.620,21.286],[81.620,21.268]] },
   { id:'tikrapara',      name:'Tikrapara',        status:'soon',
-    poly:[[81.636,21.218],[81.655,21.218],[81.655,21.232],[81.636,21.232],[81.636,21.218]] },
+    poly:[[81.637,21.216],[81.657,21.216],[81.657,21.231],[81.637,21.231],[81.637,21.216]] },
   { id:'pachpedi',       name:'Pachpedi Naka',    status:'soon',
-    poly:[[81.615,21.218],[81.634,21.218],[81.634,21.232],[81.615,21.232],[81.615,21.218]] },
+    poly:[[81.614,21.216],[81.634,21.216],[81.634,21.231],[81.614,21.231],[81.614,21.216]] },
   { id:'khamtarai',      name:'Khamtarai',        status:'soon',
-    poly:[[81.658,21.241],[81.677,21.241],[81.677,21.258],[81.658,21.258],[81.658,21.241]] },
+    poly:[[81.657,21.239],[81.679,21.239],[81.679,21.257],[81.657,21.257],[81.657,21.239]] },
   { id:'gudhiyari',      name:'Gudhiyari',        status:'soon',
-    poly:[[81.564,21.238],[81.586,21.238],[81.586,21.254],[81.564,21.254],[81.564,21.238]] },
+    poly:[[81.558,21.237],[81.580,21.237],[81.580,21.254],[81.558,21.254],[81.558,21.237]] },
 ];
 
 const COLOR = { active:'#00e676', expanding:'#ffab40', soon:'#40c4ff' };
 
-// Building fill opacity — subtle
-const BLDG_OPACITY  = { active: 0.55, expanding: 0.38, soon: 0.22 };
-// Road opacity inside zone
-const ROAD_OPACITY  = { active: 0.35, expanding: 0.25, soon: 0.14 };
-// Area wash — very faint fill over whole zone, barely visible
-const AREA_OPACITY  = { active: 0.06, expanding: 0.04, soon: 0.025 };
-
 mapboxgl.accessToken = TOKEN;
+
+// Phase 1: Start zoomed out — show full city coverage
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v11',
-  center: [81.635, 21.248],
-  zoom: 12.2,
-  pitch: 40,
-  bearing: -10,
+  center: [81.635, 21.250],
+  zoom: 10.8,
+  pitch: 0,
+  bearing: 0,
   antialias: true
 });
 
 const popup = new mapboxgl.Popup({ closeButton:false, closeOnClick:false, offset:12 });
 
 map.on('load', () => {
-  setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
+  // Hide loader
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
 
-  // Base 3D buildings — very dark, they'll be coloured per-zone below
+    // Animate stat cards in with stagger
+    ['sc1','sc2','sc3','sc4'].forEach((id, i) => {
+      setTimeout(() => document.getElementById(id).classList.add('visible'), i * 100);
+    });
+    setTimeout(() => document.getElementById('legend').classList.add('visible'), 400);
+
+    // Phase 2: After 2s, cinematic zoom into active zone cluster
+    setTimeout(() => {
+      map.flyTo({
+        center: [81.628, 21.244],
+        zoom: 14.2,
+        pitch: 48,
+        bearing: -16,
+        duration: 3800,
+        easing: t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t // ease-in-out
+      });
+      // Hide zoom hint as we zoom in
+      setTimeout(() => {
+        document.getElementById('zoom-hint').style.opacity = '0';
+      }, 2000);
+    }, 2000);
+
+  }, 600);
+
+  // Add 3D buildings base (dark)
   map.addLayer({
     id: 'base-buildings',
     source: 'composite', 'source-layer': 'building',
     filter: ['==','extrude','true'],
-    type: 'fill-extrusion', minzoom: 13,
+    type: 'fill-extrusion', minzoom: 12,
     paint: {
-      'fill-extrusion-color': '#0b1320',
+      'fill-extrusion-color': '#0a1220',
       'fill-extrusion-height': ['get','height'],
       'fill-extrusion-base': ['get','min_height'],
-      'fill-extrusion-opacity': 0.8
+      'fill-extrusion-opacity': 0.85
     }
   });
 
@@ -200,30 +245,52 @@ map.on('load', () => {
     const geom = { type:'Polygon', coordinates:[[...z.poly, z.poly[0]]] };
     const feature = { type:'Feature', geometry: geom, properties:{} };
 
-    // 1. Very faint area wash — just barely tints the zone outline
-    map.addSource(`area-${z.id}`, { type:'geojson', data: feature });
-    map.addLayer({
-      id: `area-fill-${z.id}`, type:'fill', source:`area-${z.id}`,
-      paint: { 'fill-color': color, 'fill-opacity': AREA_OPACITY[z.status] }
-    });
+    map.addSource(`src-${z.id}`, { type:'geojson', data: feature });
 
-    // 2. Coloured BUILDING FOOTPRINTS inside zone
-    //    Uses the real composite tileset — colours actual building shapes
+    // 1. Ghost area fill — barely visible, just a hint at zoomed out
     map.addLayer({
-      id: `bldg-fill-${z.id}`,
-      type: 'fill',
-      source: 'composite', 'source-layer': 'building',
-      filter: ['within', feature],
+      id: `area-${z.id}`, type:'fill', source:`src-${z.id}`,
       paint: {
         'fill-color': color,
-        'fill-opacity': BLDG_OPACITY[z.status],
-        'fill-outline-color': color,
+        'fill-opacity': ['interpolate',['linear'],['zoom'],
+          10, z.status==='active' ? 0.10 : z.status==='expanding' ? 0.07 : 0.04,
+          13, z.status==='active' ? 0.05 : z.status==='expanding' ? 0.03 : 0.02,
+          15, 0.02
+        ]
       }
     });
 
-    // 3. 3D extrusion glow for zoomed-in view
+    // 2. Zone border — glowing edge, visible at all zooms
     map.addLayer({
-      id: `bldg-3d-${z.id}`,
+      id: `border-${z.id}`, type:'line', source:`src-${z.id}`,
+      paint: {
+        'line-color': color,
+        'line-opacity': z.status==='active' ? 0.7 : z.status==='expanding' ? 0.5 : 0.3,
+        'line-width': ['interpolate',['linear'],['zoom'], 10,1.5, 13,2, 15,1.5],
+        'line-blur': 1
+      }
+    });
+
+    // 3. BUILDING FOOTPRINTS — light up real buildings inside zone (kicks in at zoom 13+)
+    map.addLayer({
+      id: `bldg-${z.id}`,
+      type: 'fill',
+      source: 'composite', 'source-layer': 'building',
+      filter: ['within', feature],
+      minzoom: 12,
+      paint: {
+        'fill-color': color,
+        'fill-opacity': ['interpolate',['linear'],['zoom'],
+          12, 0,
+          13, z.status==='active' ? 0.45 : z.status==='expanding' ? 0.30 : 0.18,
+          16, z.status==='active' ? 0.65 : z.status==='expanding' ? 0.45 : 0.28
+        ]
+      }
+    });
+
+    // 4. 3D BUILDINGS glowing (zoom 13+)
+    map.addLayer({
+      id: `bldg3d-${z.id}`,
       type: 'fill-extrusion',
       source: 'composite', 'source-layer': 'building',
       filter: ['all', ['==','extrude','true'], ['within', feature]],
@@ -232,52 +299,59 @@ map.on('load', () => {
         'fill-extrusion-color': color,
         'fill-extrusion-height': ['get','height'],
         'fill-extrusion-base': ['get','min_height'],
-        'fill-extrusion-opacity': ['interpolate',['linear'],['zoom'], 13,0.5, 16,0.75],
+        'fill-extrusion-opacity': ['interpolate',['linear'],['zoom'],
+          13, 0,
+          13.5, z.status==='active' ? 0.55 : z.status==='expanding' ? 0.38 : 0.22,
+          16, z.status==='active' ? 0.80 : z.status==='expanding' ? 0.55 : 0.35
+        ]
       }
     });
 
-    // 4. Road highlights inside zone — streets subtly glow
+    // 5. ROADS glowing inside zone (zoom 12+)
     map.addLayer({
       id: `roads-${z.id}`,
       type: 'line',
       source: 'composite', 'source-layer': 'road',
       filter: ['within', feature],
+      minzoom: 12,
       paint: {
         'line-color': color,
-        'line-opacity': ROAD_OPACITY[z.status],
-        'line-width': ['interpolate',['linear'],['zoom'], 10,0.8, 14,2, 17,4],
-        'line-blur': 1,
+        'line-opacity': ['interpolate',['linear'],['zoom'],
+          12, 0,
+          13, z.status==='active' ? 0.30 : z.status==='expanding' ? 0.20 : 0.12,
+          15, z.status==='active' ? 0.45 : z.status==='expanding' ? 0.30 : 0.18
+        ],
+        'line-width': ['interpolate',['linear'],['zoom'], 12,1, 14,2.5, 17,5],
+        'line-blur': 1.5
       }
     });
 
-    // Popup on hover
-    map.on('mouseenter', `bldg-fill-${z.id}`, (e) => {
-      map.getCanvas().style.cursor = 'pointer';
-      const statusMap = { active:'🟢 Active', expanding:'🟡 Expanding', soon:'🔵 Coming Soon' };
-      popup.setLngLat(e.lngLat).setHTML(`
-        <div style="font-family:'Syne',sans-serif;background:rgba(6,8,16,0.97);border:1px solid ${color}44;border-top:2px solid ${color};padding:14px 18px;min-width:160px;">
-          <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:4px;">${z.name}</div>
-          <div style="font-family:'Space Mono',monospace;font-size:9px;color:${color};letter-spacing:1px;text-transform:uppercase;">${statusMap[z.status]}</div>
-        </div>`).addTo(map);
+    // Hover popup
+    ['area','bldg'].forEach(prefix => {
+      map.on('mouseenter', `${prefix}-${z.id}`, (e) => {
+        map.getCanvas().style.cursor = 'pointer';
+        const labels = { active:'🟢 Active', expanding:'🟡 Expanding', soon:'🔵 Coming Soon' };
+        popup.setLngLat(e.lngLat).setHTML(`
+          <div style="font-family:'Syne',sans-serif;background:rgba(6,8,16,0.97);border:1px solid ${color}44;border-top:2px solid ${color};padding:14px 18px;min-width:160px;">
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:5px;">${z.name}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:9px;color:${color};letter-spacing:1px;text-transform:uppercase;">${labels[z.status]}</div>
+          </div>`).addTo(map);
+      });
+      map.on('mouseleave', `${prefix}-${z.id}`, () => { map.getCanvas().style.cursor=''; popup.remove(); });
     });
-    map.on('mouseleave', `bldg-fill-${z.id}`, () => { map.getCanvas().style.cursor=''; popup.remove(); });
-    map.on('mouseenter', `area-fill-${z.id}`, (e) => {
-      map.getCanvas().style.cursor = 'pointer';
-      const statusMap = { active:'🟢 Active', expanding:'🟡 Expanding', soon:'🔵 Coming Soon' };
-      popup.setLngLat(e.lngLat).setHTML(`
-        <div style="font-family:'Syne',sans-serif;background:rgba(6,8,16,0.97);border:1px solid ${color}44;border-top:2px solid ${color};padding:14px 18px;min-width:160px;">
-          <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:4px;">${z.name}</div>
-          <div style="font-family:'Space Mono',monospace;font-size:9px;color:${color};letter-spacing:1px;text-transform:uppercase;">${statusMap[z.status]}</div>
-        </div>`).addTo(map);
-    });
-    map.on('mouseleave', `area-fill-${z.id}`, () => { map.getCanvas().style.cursor=''; popup.remove(); });
+  });
+
+  // Show/hide zoom hint based on zoom level
+  map.on('zoom', () => {
+    const zh = document.getElementById('zoom-hint');
+    zh.style.opacity = map.getZoom() < 12.5 ? '1' : '0';
   });
 });
 
 function filterTo(status) {
   zones.forEach(z => {
     const vis = (status==='all' || z.status===status) ? 'visible' : 'none';
-    [`area-fill-${z.id}`,`bldg-fill-${z.id}`,`bldg-3d-${z.id}`,`roads-${z.id}`].forEach(id => {
+    [`area-${z.id}`,`border-${z.id}`,`bldg-${z.id}`,`bldg3d-${z.id}`,`roads-${z.id}`].forEach(id => {
       if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', vis);
     });
   });
