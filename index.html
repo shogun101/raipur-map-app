@@ -129,11 +129,11 @@ const TOKEN=localStorage.getItem('mbtoken')||'';
 /* ── THEMES ─────────────────────────────────────────────────────── */
 // Each theme: fill color + opacity + border color over dark base map
 const THEMES=[
-  {id:'mono',  name:'Mono',  fill:'#ffffff', border:'#ffffff', fillOp:0.14, borderOp:0.75, grad:'linear-gradient(160deg,#333,#888,#ddd)'},
-  {id:'warm',  name:'Warm',  fill:'#ffd54f', border:'#ffd54f', fillOp:0.16, borderOp:0.85, grad:'linear-gradient(160deg,#b8860b,#ffd54f,#ffe082)'},
-  {id:'neon',  name:'Neon',  fill:'#00e676', border:'#00e676', fillOp:0.14, borderOp:0.85, grad:'linear-gradient(160deg,#005724,#00e676,#69ff47)'},
-  {id:'ice',   name:'Ice',   fill:'#40c4ff', border:'#40c4ff', fillOp:0.14, borderOp:0.85, grad:'linear-gradient(160deg,#004d73,#40c4ff,#80d8ff)'},
-  {id:'ember', name:'Ember', fill:'#ff5252', border:'#ff5252', fillOp:0.15, borderOp:0.85, grad:'linear-gradient(160deg,#7f0000,#ff5252,#ff8a65)'},
+  {id:'mono',  name:'Mono',  fill:'#ffffff', border:'#ffffff', fillOp:0, borderOp:0.75, grad:'linear-gradient(160deg,#333,#888,#ddd)'},
+  {id:'warm',  name:'Warm',  fill:'#ffd54f', border:'#ffd54f', fillOp:0, borderOp:0.85, grad:'linear-gradient(160deg,#b8860b,#ffd54f,#ffe082)'},
+  {id:'neon',  name:'Neon',  fill:'#00e676', border:'#00e676', fillOp:0, borderOp:0.85, grad:'linear-gradient(160deg,#005724,#00e676,#69ff47)'},
+  {id:'ice',   name:'Ice',   fill:'#40c4ff', border:'#40c4ff', fillOp:0, borderOp:0.85, grad:'linear-gradient(160deg,#004d73,#40c4ff,#80d8ff)'},
+  {id:'ember', name:'Ember', fill:'#ff5252', border:'#ff5252', fillOp:0, borderOp:0.85, grad:'linear-gradient(160deg,#7f0000,#ff5252,#ff8a65)'},
 ];
 let theme=THEMES[0];
 let fxOn=true;
